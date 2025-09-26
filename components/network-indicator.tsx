@@ -198,6 +198,14 @@ export function NetworkIndicator() {
           </div>
           <p>ZeroDev paymaster active for sponsored transactions</p>
         </div>
+        
+        <div className="text-xs text-amber-600 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+            <span className="font-medium">Switch Networks</span>
+          </div>
+          <p>Use the Dynamic widget (top right) to switch between Base Sepolia and Ethereum Sepolia</p>
+        </div>
       </CardContent>
     </Card>
   );
