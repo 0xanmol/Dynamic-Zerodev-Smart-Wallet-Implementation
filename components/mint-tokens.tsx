@@ -38,7 +38,7 @@ export function MintTokens({
           hash: txHash,
           type: "mint",
           amount: "100",
-          symbol: "USD",
+          symbol: "ETH",
           timestamp: Date.now(),
           status: "success"
         }
@@ -64,7 +64,7 @@ export function MintTokens({
     >
       <div className="typography-button__content">
         <span className="typography typography--button-primary typography--primary">
-          {isPending ? "Minting..." : !network ? "Loading..." : "Claim USDC"}
+          {isPending ? "Minting..." : !network ? "Loading..." : "Get Test ETH"}
         </span>
       </div>
     </button>
