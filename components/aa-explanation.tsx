@@ -52,7 +52,7 @@ export function AAExplanation() {
             </p>
             <div className="mt-3 p-3 bg-green-50 rounded-lg">
               <p className="text-sm font-medium text-green-800">
-                ✅ Try minting 100 DUSD tokens - it's completely free!
+                Try minting 100 DUSD tokens - it's completely free!
               </p>
             </div>
           </CardContent>

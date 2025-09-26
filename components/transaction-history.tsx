@@ -103,7 +103,7 @@ export function TransactionHistory() {
         <CardHeader className="pb-4">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
-              <span className="text-orange-600 text-lg">📋</span>
+              <span className="text-orange-600 text-lg font-bold">H</span>
             </div>
             <div>
               <CardTitle className="text-lg">Transaction History</CardTitle>
@@ -131,7 +131,7 @@ export function TransactionHistory() {
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
-            <span className="text-orange-600 text-lg">📋</span>
+            <span className="text-orange-600 text-lg font-bold">H</span>
           </div>
           <div>
             <CardTitle className="text-lg">Transaction History</CardTitle>

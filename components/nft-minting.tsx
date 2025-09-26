@@ -132,7 +132,7 @@ export function NFTMinting({
         const explorerUrl = chainId === 84532 
           ? `https://sepolia.basescan.org/tx/${actualTxHash}`
           : `https://sepolia.etherscan.io/tx/${actualTxHash}`;
-        alert(`🎉 NFT Minted Successfully!\n\nUser Operation Hash: ${hash}\nTransaction Hash: ${actualTxHash}\n\n✅ Your NFT has been minted and confirmed on the blockchain\n🔗 View on Explorer: ${explorerUrl}\n\nYour NFT balance: ${userNFTBalance + 1}`);
+        alert(`NFT Minted Successfully!\n\nUser Operation Hash: ${hash}\nTransaction Hash: ${actualTxHash}\n\nYour NFT has been minted and confirmed on the blockchain\nView on Explorer: ${explorerUrl}\n\nYour NFT balance: ${userNFTBalance + 1}`);
         
         // Only call success after we have the real transaction hash
         onTransactionSuccess?.();
@@ -162,7 +162,7 @@ export function NFTMinting({
         window.dispatchEvent(transactionEvent);
         
         // Show pending message - DO NOT call success since transaction isn't confirmed
-        alert(`⏳ NFT Mint Transaction Submitted (Pending)\n\nUser Operation Hash: ${hash}\n\n🔄 Your transaction has been submitted but is still processing\n⏳ It may take a few minutes to confirm due to network conditions\n\nNote: The transaction will appear on BaseScan once confirmed.`);
+        alert(`NFT Mint Transaction Submitted (Pending)\n\nUser Operation Hash: ${hash}\n\nYour transaction has been submitted but is still processing\nIt may take a few minutes to confirm due to network conditions\n\nNote: The transaction will appear on BaseScan once confirmed.`);
       }
     } catch (error) {
       console.error("NFT minting failed:", error);

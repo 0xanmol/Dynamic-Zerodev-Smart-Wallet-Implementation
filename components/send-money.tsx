@@ -185,7 +185,7 @@ export function SendMoney({
         const explorerUrl = chainId === 84532 
           ? `https://sepolia.basescan.org/tx/${actualTxHash}`
           : `https://sepolia.etherscan.io/tx/${actualTxHash}`;
-        alert(`🎉 Gasless ETH transfer successful!\n\nTransaction Hash: ${actualTxHash}\n\nView on Explorer: ${explorerUrl}`);
+        alert(`Gasless ETH transfer successful!\n\nTransaction Hash: ${actualTxHash}\n\nView on Explorer: ${explorerUrl}`);
         
         // Clear form
         setRecipientAddress("");

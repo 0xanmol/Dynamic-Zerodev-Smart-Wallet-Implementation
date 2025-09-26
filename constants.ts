@@ -239,7 +239,7 @@ export function getChainInfo(chainId: number) {
     name: "Unknown Network",
     explorer: "",
     rpc: "",
-    icon: "❓",
+    icon: "?",
   };
 }
 

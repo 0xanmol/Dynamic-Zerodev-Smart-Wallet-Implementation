@@ -33,12 +33,12 @@ async function fundContract() {
       value: fundingAmount,
     });
     
-    console.log("📤 Transaction sent:", tx.hash);
-    console.log("⏳ Waiting for confirmation...");
+    console.log("Transaction sent:", tx.hash);
+    console.log("Waiting for confirmation...");
     
     await tx.wait();
     
-    console.log("✅ Contract funded successfully!");
+    console.log("Contract funded successfully!");
     console.log("Amount sent:", ethers.formatEther(fundingAmount), "ETH");
     
     // Check contract balance
