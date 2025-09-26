@@ -4,6 +4,7 @@ import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
 import { useState, useEffect } from "react";
 import { ExternalLink } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getExplorerUrl } from "@/constants";
 
 interface Transaction {
   hash: string;
@@ -12,6 +13,7 @@ interface Transaction {
   symbol?: string;
   timestamp: number;
   status: "pending" | "success" | "failed";
+  chainId?: number;
 }
 
 export function TransactionHistory() {
@@ -46,12 +48,28 @@ export function TransactionHistory() {
     };
   }, [transactions]);
 
-  const getExplorerUrl = (hash: string) => {
-    if (!primaryWallet || !isEthereumWallet(primaryWallet)) return "";
+  const getExplorerUrlForTx = (tx: Transaction) => {
+    if (!tx.hash) return "";
     
-    // This would need to be dynamic based on the current chain
-    // For Base Sepolia
-    return `https://sepolia.basescan.org/tx/${hash}`;
+    // Use chainId from transaction if available, otherwise try to get from wallet
+    let chainId = tx.chainId;
+    
+    if (!chainId && primaryWallet && isEthereumWallet(primaryWallet)) {
+      // Try to get current chain ID from wallet
+      primaryWallet.getWalletClient().then(client => {
+        chainId = client?.chain?.id;
+      }).catch(() => {
+        // Fallback to Base Sepolia if we can't determine chain
+        chainId = 84532;
+      });
+    }
+    
+    // Default to Base Sepolia if no chain ID available
+    if (!chainId) {
+      chainId = 84532;
+    }
+    
+    return getExplorerUrl(chainId, tx.hash);
   };
 
   const getTransactionIcon = (type: string) => {
@@ -166,7 +184,7 @@ export function TransactionHistory() {
                     </span>
                   </div>
                   <a
-                    href={getExplorerUrl(tx.hash)}
+                    href={getExplorerUrlForTx(tx)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-muted-foreground hover:text-foreground"

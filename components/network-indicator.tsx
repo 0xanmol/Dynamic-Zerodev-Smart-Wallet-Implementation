@@ -4,6 +4,7 @@ import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
 import { useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getChainInfo } from "@/constants";
 
 interface NetworkInfo {
   chainId: number | null;
@@ -57,21 +58,12 @@ export function NetworkIndicator() {
             chainName 
           });
           
-          // Map chain IDs to readable names
-          const getChainName = (id: number | undefined) => {
-            switch (id) {
-              case 84532: return "Base Sepolia";
-              case 8453: return "Base";
-              case 1: return "Ethereum";
-              case 137: return "Polygon";
-              case 42161: return "Arbitrum";
-              default: return chainName || `Chain ${id}`;
-            }
-          };
+          // Use the centralized chain info function
+          const chainInfo = getChainInfo(chainId || 0);
           
           setNetworkInfo({
             chainId: chainId || null,
-            chainName: getChainName(chainId),
+            chainName: chainInfo.name,
             isConnected: true,
           });
         } else {
@@ -128,12 +120,13 @@ export function NetworkIndicator() {
   }
 
   const getChainColor = (chainId: number) => {
+    const chainInfo = getChainInfo(chainId);
     switch (chainId) {
       case 84532: // Base Sepolia
         return "bg-blue-500";
       case 8453: // Base Mainnet
         return "bg-blue-600";
-      case 11155111: // Sepolia
+      case 11155111: // Ethereum Sepolia
         return "bg-purple-500";
       case 1: // Ethereum Mainnet
         return "bg-gray-600";

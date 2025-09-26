@@ -3,12 +3,12 @@
 import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
 import { useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 import { useState, useEffect, useCallback } from "react";
-import { getContractAddress, NFT_ABI } from "@/constants";
+import { getContractAddress, NFT_ABI, getRpcUrl, getChainInfo } from "@/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
 import { createPublicClient, http } from "viem";
-import { baseSepolia } from "viem/chains";
+import { baseSepolia, sepolia } from "viem/chains";
 
 interface DemoBalance {
   symbol: string;
@@ -51,11 +51,32 @@ export function BalancesPanel() {
           return;
         }
 
-        // Create a separate public client for reading contract data (not ZeroDev bundler)
-        const baseSepoliaClient = createPublicClient({
-          chain: baseSepolia,
-          transport: http("https://sepolia.base.org"),
-        });
+            // Get current chain ID
+            const chainId = walletClient.chain?.id || publicClient.chain?.id;
+            if (!chainId) {
+              setError("Could not determine chain ID");
+              return;
+            }
+
+            // Create a separate public client for reading contract data (not ZeroDev bundler)
+            const rpcUrl = getRpcUrl(chainId);
+            const chainInfo = getChainInfo(chainId);
+            
+            let chainClient;
+            if (chainId === 84532) {
+              chainClient = createPublicClient({
+                chain: baseSepolia,
+                transport: http(rpcUrl),
+              });
+            } else if (chainId === 11155111) {
+              chainClient = createPublicClient({
+                chain: sepolia,
+                transport: http(rpcUrl),
+              });
+            } else {
+              setError(`Unsupported chain: ${chainInfo.name}`);
+              return;
+            }
 
         const demoBalances: DemoBalance[] = [];
 
@@ -75,53 +96,53 @@ export function BalancesPanel() {
           console.error("Failed to fetch ETH balance:", ethError);
         }
 
-        // Fetch NFT balance using Base Sepolia client (not ZeroDev bundler)
-        try {
-          const nftContract = getContractAddress("84532", "NFT");
-          if (!nftContract) {
-            console.log("NFT contract not found, using localStorage fallback");
-            const storedCount = localStorage.getItem("nftCount");
-            const nftCountNumber = storedCount ? parseInt(storedCount, 10) : 0;
-            
-            demoBalances.push({
-              symbol: "NFTs",
-              balance: nftCountNumber.toString(),
-              type: "nft",
-              icon: "🖼️"
-            });
-          } else {
-            const nftCount = await baseSepoliaClient.readContract({
-              address: nftContract,
-              abi: NFT_ABI,
-              functionName: "balanceOf",
-              args: [walletClient.account.address],
-            });
-            
-            const nftCountNumber = Number(nftCount);
-            
-            // Store in localStorage for persistence
-            localStorage.setItem("nftCount", nftCountNumber.toString());
-            
-            demoBalances.push({
-              symbol: "NFTs",
-              balance: nftCountNumber.toString(),
-              type: "nft",
-              icon: "🖼️"
-            });
-          }
-        } catch (nftError) {
-          console.error("Failed to fetch NFT balance:", nftError);
-          // Use localStorage fallback
-          const storedNftCount = localStorage.getItem("nftCount");
-          if (storedNftCount) {
-            demoBalances.push({
-              symbol: "NFTs",
-              balance: storedNftCount,
-              type: "nft",
-              icon: "🖼️"
-            });
-          }
-        }
+            // Fetch NFT balance using chain-specific client
+            try {
+              const nftContract = getContractAddress(chainId.toString(), "NFT");
+              if (!nftContract) {
+                console.log(`NFT contract not found for chain ${chainId}, using localStorage fallback`);
+                const storedCount = localStorage.getItem(`nftCount_${chainId}`);
+                const nftCountNumber = storedCount ? parseInt(storedCount, 10) : 0;
+                
+                demoBalances.push({
+                  symbol: "NFTs",
+                  balance: nftCountNumber.toString(),
+                  type: "nft",
+                  icon: "🖼️"
+                });
+              } else {
+                const nftCount = await chainClient.readContract({
+                  address: nftContract,
+                  abi: NFT_ABI,
+                  functionName: "balanceOf",
+                  args: [walletClient.account.address],
+                });
+                
+                const nftCountNumber = Number(nftCount);
+                
+                // Store in localStorage for persistence (chain-specific)
+                localStorage.setItem(`nftCount_${chainId}`, nftCountNumber.toString());
+                
+                demoBalances.push({
+                  symbol: "NFTs",
+                  balance: nftCountNumber.toString(),
+                  type: "nft",
+                  icon: "🖼️"
+                });
+              }
+            } catch (nftError) {
+              console.error("Failed to fetch NFT balance:", nftError);
+              // Use localStorage fallback
+              const storedNftCount = localStorage.getItem(`nftCount_${chainId}`);
+              if (storedNftCount) {
+                demoBalances.push({
+                  symbol: "NFTs",
+                  balance: storedNftCount,
+                  type: "nft",
+                  icon: "🖼️"
+                });
+              }
+            }
 
         // Add demo activity count
         const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");

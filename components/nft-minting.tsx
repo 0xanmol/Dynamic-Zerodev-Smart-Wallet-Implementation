@@ -94,6 +94,7 @@ export function NFTMinting({
           symbol: "ETH",
           timestamp: Date.now(),
           status: "success" as const,
+          chainId: walletClient.chain?.id || publicClient.chain?.id,
         };
         
         const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");

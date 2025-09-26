@@ -9,6 +9,7 @@ import { NFTMinting } from "./nft-minting";
 import { SendMoney } from "./send-money";
 import { AAExplanation } from "./aa-explanation";
 import { SecurityFeatures } from "./security-features";
+import { ChainSelector } from "./chain-selector";
 import { RefreshCw, Wallet, Shield, Info } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -68,15 +69,18 @@ export function Dashboard({ activeTab, onTabChange }: DashboardProps) {
       {/* Tab Content */}
       {activeTab === "wallet" && (
         <div className="space-y-8">
-          {/* Status Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="w-full">
-              <NetworkIndicator />
-            </div>
-            <div className="w-full">
-              <BalancesPanel key={refreshKey} />
-            </div>
-          </div>
+              {/* Status Overview */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="w-full">
+                  <NetworkIndicator />
+                </div>
+                <div className="w-full">
+                  <ChainSelector />
+                </div>
+                <div className="w-full">
+                  <BalancesPanel key={refreshKey} />
+                </div>
+              </div>
 
 
               {/* Action Cards */}

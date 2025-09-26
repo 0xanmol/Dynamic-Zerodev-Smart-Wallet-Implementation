@@ -1,8 +1,12 @@
 // Contract addresses
 export const CONTRACTS = {
-  "84532": {
+  "84532": { // Base Sepolia
     USD: "0x678d798938bd326d76e5db814457841d055560d0",
     NFT: "0x275068e0610DefC70459cA40d45C95e3DCF50A10",
+  },
+  "11155111": { // Ethereum Sepolia
+    USD: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e",
+    NFT: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e", // Same contract for now
   },
 } as const;
 
@@ -116,6 +120,22 @@ export const NFT_ABI = [
   }
 ] as const;
 
+// Chain information
+export const CHAIN_INFO = {
+  "84532": {
+    name: "Base Sepolia",
+    explorer: "https://sepolia.basescan.org",
+    rpc: "https://sepolia.base.org",
+    icon: "🔵",
+  },
+  "11155111": {
+    name: "Ethereum Sepolia", 
+    explorer: "https://sepolia.etherscan.io",
+    rpc: "https://ethereum-sepolia.publicnode.com",
+    icon: "🔷",
+  },
+} as const;
+
 export function getContractAddress(
   networkId: string | number,
   contractName: string
@@ -126,4 +146,23 @@ export function getContractAddress(
   }
 
   return undefined;
+}
+
+export function getChainInfo(chainId: number) {
+  return CHAIN_INFO[chainId as keyof typeof CHAIN_INFO] || {
+    name: "Unknown Network",
+    explorer: "",
+    rpc: "",
+    icon: "❓",
+  };
+}
+
+export function getExplorerUrl(chainId: number, txHash: string) {
+  const chainInfo = getChainInfo(chainId);
+  return chainInfo.explorer ? `${chainInfo.explorer}/tx/${txHash}` : "";
+}
+
+export function getRpcUrl(chainId: number) {
+  const chainInfo = getChainInfo(chainId);
+  return chainInfo.rpc;
 }
