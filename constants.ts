@@ -5,8 +5,8 @@ export const CONTRACTS = {
     NFT: "0x275068e0610DefC70459cA40d45C95e3DCF50A10",
   },
   "11155111": { // Ethereum Sepolia
-    USD: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e",
-    NFT: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e", // Same contract for now
+    USD: null, // No USD token deployed on Ethereum Sepolia
+    NFT: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e", // FreeNFT contract
   },
 } as const;
 
@@ -142,7 +142,8 @@ export function getContractAddress(
 ): `0x${string}` | undefined {
   const networkContracts = (CONTRACTS as Record<string, any>)[networkId];
   if (networkContracts && contractName in networkContracts) {
-    return networkContracts[contractName];
+    const address = networkContracts[contractName];
+    return address === null ? undefined : address;
   }
 
   return undefined;

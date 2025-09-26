@@ -63,8 +63,15 @@ export function ChainSelector() {
       setCurrentChainId(targetChainId);
       setIsOpen(false);
       
-      // Refresh the page to update all components
-      window.location.reload();
+      // Dispatch custom event to notify other components
+      window.dispatchEvent(new CustomEvent('chainSwitched', { 
+        detail: { chainId: targetChainId } 
+      }));
+      
+      // Small delay before refresh to allow event to propagate
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
     } catch (error) {
       console.error("Failed to switch chain:", error);
       alert(`Failed to switch to ${getChainInfo(targetChainId).name}. Please try again.`);

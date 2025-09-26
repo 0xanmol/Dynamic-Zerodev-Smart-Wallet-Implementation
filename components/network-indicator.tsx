@@ -88,6 +88,23 @@ export function NetworkIndicator() {
     }
 
     fetchNetworkInfo();
+
+    // Add a listener for chain changes
+    const handleChainChange = () => {
+      console.log("Chain change detected, refreshing network info...");
+      fetchNetworkInfo();
+    };
+
+    // Listen for chain change events
+    window.addEventListener('chainChanged', handleChainChange);
+    
+    // Also listen for custom chain change events from our chain selector
+    window.addEventListener('chainSwitched', handleChainChange);
+
+    return () => {
+      window.removeEventListener('chainChanged', handleChainChange);
+      window.removeEventListener('chainSwitched', handleChainChange);
+    };
   }, [primaryWallet, isLoggedIn]);
 
   if (!networkInfo.isConnected) {
