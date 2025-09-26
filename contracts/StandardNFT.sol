@@ -1,71 +1,103 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Counters.sol";
-
-contract StandardNFT is ERC721, Ownable {
-    using Counters for Counters.Counter;
+contract StandardNFT {
+    // Token name and symbol
+    string public name = "Dynamic Demo NFT";
+    string public symbol = "DDNFT";
     
-    Counters.Counter private _tokenIdCounter;
-    uint256 public mintPrice = 0; // Free minting
+    // Token counter
+    uint256 private _tokenIdCounter;
+    
+    // Mint price (free)
+    uint256 public mintPrice = 0;
+    
+    // Owner
+    address public owner;
     
     // Base URI for metadata
     string private _baseTokenURI;
     
+    // Mappings
+    mapping(uint256 => address) private _owners;
+    mapping(address => uint256) private _balances;
+    mapping(uint256 => string) private _tokenURIs;
+    
     // Events
+    event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     event NFTMinted(address indexed to, uint256 indexed tokenId);
     
-    constructor() ERC721("Dynamic Demo NFT", "DDNFT") Ownable(msg.sender) {
+    constructor() {
+        owner = msg.sender;
         _baseTokenURI = "https://api.dynamic.xyz/metadata/";
+    }
+    
+    // Modifier for owner only
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Not the owner");
+        _;
     }
     
     // Mint function - free for everyone
     function mint(address to) public payable returns (uint256) {
         require(msg.value >= mintPrice, "Insufficient payment");
         
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
+        uint256 tokenId = _tokenIdCounter;
+        _tokenIdCounter++;
         
-        _safeMint(to, tokenId);
+        _owners[tokenId] = to;
+        _balances[to]++;
         
+        emit Transfer(address(0), to, tokenId);
         emit NFTMinted(to, tokenId);
+        
         return tokenId;
     }
     
-    // Get current token count
+    // ERC721 functions
+    function balanceOf(address owner) public view returns (uint256) {
+        require(owner != address(0), "Balance query for zero address");
+        return _balances[owner];
+    }
+    
+    function ownerOf(uint256 tokenId) public view returns (address) {
+        address tokenOwner = _owners[tokenId];
+        require(tokenOwner != address(0), "Owner query for nonexistent token");
+        return tokenOwner;
+    }
+    
+    function tokenURI(uint256 tokenId) public view returns (string memory) {
+        require(_owners[tokenId] != address(0), "URI query for nonexistent token");
+        return string(abi.encodePacked(_baseTokenURI, _toString(tokenId)));
+    }
+    
     function totalSupply() public view returns (uint256) {
-        return _tokenIdCounter.current();
+        return _tokenIdCounter;
     }
     
-    // Get next token ID
     function nextTokenId() public view returns (uint256) {
-        return _tokenIdCounter.current();
+        return _tokenIdCounter;
     }
     
-    // Set mint price (only owner)
+    // Owner functions
     function setMintPrice(uint256 _price) public onlyOwner {
         mintPrice = _price;
     }
     
-    // Set base URI (only owner)
     function setBaseURI(string memory baseURI) public onlyOwner {
         _baseTokenURI = baseURI;
     }
     
-    // Override tokenURI to use base URI
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "Token does not exist");
-        return string(abi.encodePacked(_baseTokenURI, _toString(tokenId)));
+    function setTokenURI(uint256 tokenId, string memory _tokenURI) public onlyOwner {
+        require(_owners[tokenId] != address(0), "URI set of nonexistent token");
+        _tokenURIs[tokenId] = _tokenURI;
     }
     
-    // Withdraw funds (only owner)
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds to withdraw");
         
-        (bool success, ) = payable(owner()).call{value: balance}("");
+        (bool success, ) = payable(owner).call{value: balance}("");
         require(success, "Withdrawal failed");
     }
     
