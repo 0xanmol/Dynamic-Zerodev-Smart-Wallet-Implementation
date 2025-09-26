@@ -77,6 +77,16 @@ I've built a comprehensive demo that directly addresses all the issues your team
 - ZeroDev paymaster for gas sponsorship
 - Dynamic smart wallet auto-deployment
 
+### Development Challenges Overcome
+
+**Account Abstraction Complexity**: Initially struggled with ZeroDev's user operation flow - transactions were being submitted but not confirming. Discovered the issue was using user operation hashes instead of actual transaction hashes from the receipt. This is now properly handled with `kernelClient.waitForUserOperationReceipt()`.
+
+**Contract Deployment Issues**: Hardhat setup failed due to ESM conflicts, so switched to manual deployment via Remix. This actually provided better visibility into the deployment process and contract interactions.
+
+**UI/UX Polish**: What started as a basic demo evolved into a comprehensive dashboard with proper error handling, loading states, and responsive design. Each component was iteratively improved based on real user testing.
+
+**Error Handling**: Implemented comprehensive error handling for common issues like insufficient balance, transaction timeouts, and paymaster errors. Users now get clear, actionable error messages instead of cryptic blockchain errors.
+
 ## Setup Instructions
 
 ### Quick Start
