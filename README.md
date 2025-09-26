@@ -2,7 +2,7 @@
 
 A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abstraction for gasless transactions on Base Sepolia.
 
-## 🚀 Features
+## Features
 
 - **Dynamic Embedded Wallets**: Seamless wallet connection and management
 - **ZeroDev Account Abstraction**: Gasless transactions with sponsored gas fees
@@ -11,7 +11,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 - **Real-time Balance Tracking**: Live balance updates and transaction history
 - **Modern UI**: Clean, responsive interface with dark/light theme support
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: Next.js 15, React, TypeScript
 - **Styling**: Tailwind CSS, shadcn/ui components
@@ -19,14 +19,14 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 - **Network**: Base Sepolia testnet
 - **Smart Contracts**: Solidity (ERC721 NFT contract)
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+ 
 - npm or yarn
 - Base Sepolia ETH (for testing)
 - Dynamic account with ZeroDev integration
 
-## 🚀 Quick Start
+## Quick Start
 
 1. **Clone the repository**
    ```bash
@@ -57,7 +57,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 5. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
 
-## 🎯 Demo Features
+## Demo Features
 
 ### Wallet Connection
 - Connect using Dynamic's embedded wallet
@@ -80,7 +80,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 - BaseScan integration for verification
 - Success/failure status indicators
 
-## 🏗️ Architecture
+## Architecture
 
 ### Smart Contracts
 - **FreeNFT.sol**: ERC721 NFT contract for free minting
@@ -100,7 +100,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 - **User Operations**: Proper handling of user operation receipts
 - **Real Transaction Hashes**: Extraction from user operation receipts
 
-## 🔧 Configuration
+## Configuration
 
 ### Dynamic Dashboard Setup
 1. Create a Dynamic account at [app.dynamic.xyz](https://app.dynamic.xyz)
@@ -115,7 +115,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 3. Configure paymaster with sufficient balance
 4. Set up sponsorship policies
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── app/                    # Next.js app directory
@@ -132,7 +132,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 └── public/                # Static assets
 ```
 
-## 🧪 Testing
+## Testing
 
 ### Manual Testing
 1. **Connect Wallet**: Test wallet connection flow
@@ -146,7 +146,7 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 - Real transaction hashes are extracted from ZeroDev user operations
 - Gas fees are sponsored by ZeroDev paymaster
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -167,14 +167,14 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
    - These are normal during initial connection
    - Balances will load once wallet is fully connected
 
-## 📚 Resources
+## Resources
 
 - [Dynamic Documentation](https://docs.dynamic.xyz)
 - [ZeroDev Documentation](https://docs.zerodev.app)
 - [Base Sepolia Faucet](https://www.coinbase.com/faucets/base-ethereum-sepolia-faucet)
 - [BaseScan Explorer](https://sepolia.basescan.org)
 
-## 🤝 Contributing
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -182,18 +182,18 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 4. Test thoroughly
 5. Submit a pull request
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License.
 
-## 🎉 Success Metrics
+## Success Metrics
 
-- ✅ Real blockchain transactions on Base Sepolia
-- ✅ Gasless transactions via ZeroDev sponsorship
-- ✅ Working NFT minting with contract interaction
-- ✅ Live transaction tracking and verification
-- ✅ Modern, responsive UI with excellent UX
+- Real blockchain transactions on Base Sepolia
+- Gasless transactions via ZeroDev sponsorship
+- Working NFT minting with contract interaction
+- Live transaction tracking and verification
+- Modern, responsive UI with excellent UX
 
 ---
 
-**Built with ❤️ using Dynamic + ZeroDev + Next.js**
+**Built with Dynamic + ZeroDev + Next.js**
