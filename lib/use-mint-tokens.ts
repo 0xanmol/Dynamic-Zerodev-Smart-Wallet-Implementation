@@ -33,11 +33,13 @@ export function useMintTokens() {
       const walletClient = await primaryWallet.getWalletClient();
 
       // Use writeContract for ERC-20 transfers
+      // Convert amountDollars to wei (18 decimals)
+      const amountInWei = BigInt(amountDollars) * BigInt(10 ** 18);
       const hash = await walletClient.writeContract({
         address: tokenAddress,
         abi: TOKEN_ABI,
         functionName: "mint",
-        args: [BigInt(amountDollars)],
+        args: [amountInWei],
       });
 
       setTxHash(hash);
