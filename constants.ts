@@ -5,7 +5,7 @@ export const CONTRACTS = {
     NFT: "0x9fbeb7d8e95eDD3B1825eF1d9447B52e68cEa248", // StandardNFT contract
   },
   "11155111": { // Ethereum Sepolia
-    USD: null, // No DUSD token deployed on Ethereum Sepolia
+    USD: "0x1F7daF8B1989A949c5f2d70340C234eF63aEE6F5", // DUSD token
     NFT: "0xbA7ed67197681Ed3B9C63063A2CDD9EE2A21f175", // StandardNFT contract
   },
 } as const;
