@@ -2,11 +2,11 @@
 export const CONTRACTS = {
   "84532": { // Base Sepolia
     USD: "0x678d798938bd326d76e5db814457841d055560d0", // DUSD token
-    NFT: "0x275068e0610DefC70459cA40d45C95e3DCF50A10",
+    NFT: "0x9fbeb7d8e95eDD3B1825eF1d9447B52e68cEa248", // StandardNFT contract
   },
   "11155111": { // Ethereum Sepolia
     USD: null, // No DUSD token deployed on Ethereum Sepolia
-    NFT: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e", // FreeNFT contract
+    NFT: "0xbA7ed67197681Ed3B9C63063A2CDD9EE2A21f175", // StandardNFT contract
   },
 } as const;
 
