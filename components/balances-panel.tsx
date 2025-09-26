@@ -1,8 +1,14 @@
 "use client";
 
 import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
-import { useState, useEffect } from "react";
+import { useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
+import { useState, useEffect, useCallback } from "react";
 import { getContractAddress, TOKEN_ABI } from "@/constants";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RefreshCw } from "lucide-react";
+import { createPublicClient, http } from "viem";
+import { baseSepolia } from "viem/chains";
 
 interface DemoBalance {
   symbol: string;
@@ -13,12 +19,12 @@ interface DemoBalance {
 
 export function BalancesPanel() {
   const { primaryWallet } = useDynamicContext();
+  const isLoggedIn = useIsLoggedIn();
   const [balances, setBalances] = useState<DemoBalance[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchDemoBalances() {
+  const fetchDemoBalances = useCallback(async (retryCount = 0) => {
       if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
         setBalances([]);
         return;
@@ -28,173 +34,195 @@ export function BalancesPanel() {
       setError(null);
 
       try {
+        // Add a small delay for wallet initialization
+        if (retryCount > 0) {
+          await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+        }
+
         const walletClient = await primaryWallet.getWalletClient();
         const publicClient = await primaryWallet.getPublicClient();
         
         if (!walletClient || !publicClient) {
-          setError("Wallet client not available");
+          if (retryCount < 3) {
+            console.log(`Wallet client not available, retrying... (${retryCount + 1}/3)`);
+            return fetchDemoBalances(retryCount + 1);
+          }
+          setError("Wallet client not available after retries");
           return;
         }
 
-        const address = await walletClient.getAddresses();
-        const userAddress = address[0];
+        // Create a separate public client for reading contract data (not ZeroDev bundler)
+        const baseSepoliaClient = createPublicClient({
+          chain: baseSepolia,
+          transport: http("https://sepolia.base.org"),
+        });
 
-        if (!userAddress) {
-          setError("No wallet address found");
-          return;
-        }
+        const demoBalances: DemoBalance[] = [];
 
-        const chainId = walletClient.chain?.id;
-        if (!chainId) {
-          setError("No chain ID found");
-          return;
-        }
-
-        const newBalances: DemoBalance[] = [];
-
-        // Fetch DUSD balance (demo token)
+        // Fetch ETH balance
         try {
-          const dusdAddress = getContractAddress(chainId, "USD");
-          if (dusdAddress) {
-            const dusdBalance = await publicClient.readContract({
-              address: dusdAddress,
+          const ethBalance = await publicClient.getBalance({
+            address: walletClient.account.address,
+          });
+          const ethBalanceFormatted = (Number(ethBalance) / Math.pow(10, 18)).toFixed(4);
+          demoBalances.push({
+            symbol: "ETH",
+            balance: ethBalanceFormatted,
+            type: "token",
+            icon: "💎"
+          });
+        } catch (ethError) {
+          console.error("Failed to fetch ETH balance:", ethError);
+        }
+
+        // Fetch NFT balance using Base Sepolia client (not ZeroDev bundler)
+        try {
+          const nftContract = getContractAddress("84532", "NFT");
+          if (!nftContract) {
+            console.log("NFT contract not found, using localStorage fallback");
+            const storedCount = localStorage.getItem("nftCount");
+            const nftCountNumber = storedCount ? parseInt(storedCount, 10) : 0;
+            
+            demoBalances.push({
+              symbol: "NFTs",
+              balance: nftCountNumber.toString(),
+              type: "nft",
+              icon: "🖼️"
+            });
+          } else {
+            const nftCount = await baseSepoliaClient.readContract({
+              address: nftContract,
               abi: TOKEN_ABI,
               functionName: "balanceOf",
-              args: [userAddress],
+              args: [walletClient.account.address],
             });
-            newBalances.push({
-              symbol: "DUSD",
-              balance: Number(dusdBalance).toString(),
-              type: "token",
-              icon: "💰",
+            
+            const nftCountNumber = Number(nftCount);
+            
+            // Store in localStorage for persistence
+            localStorage.setItem("nftCount", nftCountNumber.toString());
+            
+            demoBalances.push({
+              symbol: "NFTs",
+              balance: nftCountNumber.toString(),
+              type: "nft",
+              icon: "🖼️"
             });
           }
-        } catch (err) {
-          console.log("Failed to fetch DUSD balance:", err);
-          // Add fallback
-          newBalances.push({
-            symbol: "DUSD",
-            balance: "0",
-            type: "token",
-            icon: "💰",
-          });
+        } catch (nftError) {
+          console.error("Failed to fetch NFT balance:", nftError);
+          // Use localStorage fallback
+          const storedNftCount = localStorage.getItem("nftCount");
+          if (storedNftCount) {
+            demoBalances.push({
+              symbol: "NFTs",
+              balance: storedNftCount,
+              type: "nft",
+              icon: "🖼️"
+            });
+          }
         }
 
-        // Fetch NFT balance
-        try {
-          const nftAddress = "0x275068e0610DefC70459cA40d45C95e3DCF50A10";
-          const nftBalance = await publicClient.readContract({
-            address: nftAddress as `0x${string}`,
-            abi: [
-              {
-                inputs: [{ internalType: "address", name: "owner", type: "address" }],
-                name: "balanceOf",
-                outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
-                stateMutability: "view",
-                type: "function",
-              },
-            ],
-            functionName: "balanceOf",
-            args: [userAddress],
-          });
-          newBalances.push({
-            symbol: "NFTs",
-            balance: Number(nftBalance).toString(),
-            type: "nft",
-            icon: "🖼️",
-          });
-        } catch (err) {
-          console.log("Failed to fetch NFT balance:", err);
-          // Add fallback
-          newBalances.push({
-            symbol: "NFTs",
-            balance: "0",
-            type: "nft",
-            icon: "🖼️",
-          });
-        }
+        // Add demo activity count
+        const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");
+        demoBalances.push({
+          symbol: "Gasless Txs",
+          balance: existingTxs.length.toString(),
+          type: "activity",
+          icon: "⚡"
+        });
 
-        // Get transaction count from localStorage
-        try {
-          const transactions = JSON.parse(localStorage.getItem("demo-transactions") || "[]");
-          const successfulTxs = transactions.filter((tx: any) => tx.status === "success");
-          newBalances.push({
-            symbol: "Gasless Txs",
-            balance: successfulTxs.length.toString(),
-            type: "activity",
-            icon: "⚡",
-          });
-        } catch (err) {
-          newBalances.push({
-            symbol: "Gasless Txs",
-            balance: "0",
-            type: "activity",
-            icon: "⚡",
-          });
-        }
-
-        setBalances(newBalances);
+        setBalances(demoBalances);
       } catch (err) {
         console.error("Failed to fetch demo balances:", err);
-        setError("Failed to load demo balances");
+        setError("Failed to fetch balances");
       } finally {
         setIsLoading(false);
       }
-    }
-
-    fetchDemoBalances();
   }, [primaryWallet]);
 
-  if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchDemoBalances();
+    } else {
+      setBalances([]);
+    }
+  }, [isLoggedIn, fetchDemoBalances]);
+
+  const handleRefresh = () => {
+    if (isLoggedIn) {
+      fetchDemoBalances();
+    }
+  };
+
+  if (!isLoggedIn) {
     return (
-      <div className="rounded-lg border bg-card p-4">
-        <h3 className="mb-3 text-sm font-medium text-muted-foreground">Demo Assets</h3>
-        <p className="text-sm text-muted-foreground">Connect wallet to view your gasless demo assets</p>
-      </div>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Demo Assets</CardTitle>
+          <CardDescription>Connect your wallet to view balances</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Your wallet balances will appear here once connected.
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <h3 className="mb-3 text-sm font-medium text-muted-foreground">Demo Assets</h3>
-      
-      {isLoading && (
-        <div className="space-y-2">
-          <div className="h-4 w-20 animate-pulse rounded bg-muted"></div>
-          <div className="h-4 w-16 animate-pulse rounded bg-muted"></div>
-          <div className="h-4 w-24 animate-pulse rounded bg-muted"></div>
-        </div>
-      )}
-
-      {error && (
-        <p className="text-sm text-destructive">{error}</p>
-      )}
-
-      {!isLoading && !error && balances.length === 0 && (
-        <p className="text-sm text-muted-foreground">No demo assets found</p>
-      )}
-
-      {!isLoading && !error && balances.length > 0 && (
-        <div className="space-y-3">
-          {balances.map((balance, index) => (
-            <div key={index} className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{balance.icon}</span>
-                <span className="text-sm font-medium">{balance.symbol}</span>
-              </div>
-              <span className="text-sm font-bold text-primary">
-                {balance.balance}
-              </span>
-            </div>
-          ))}
-          
-          <div className="mt-3 pt-2 border-t border-border">
-            <p className="text-xs text-muted-foreground">
-              💡 All transactions are gasless thanks to ZeroDev sponsorship
-            </p>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle className="flex items-center justify-between">
+          Demo Assets
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </Button>
+        </CardTitle>
+        <CardDescription>
+          Your wallet balances and activity
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="space-y-2">
+            <div className="h-4 bg-muted animate-pulse rounded"></div>
+            <div className="h-4 bg-muted animate-pulse rounded"></div>
+            <div className="h-4 bg-muted animate-pulse rounded"></div>
           </div>
-        </div>
-      )}
-    </div>
+        ) : error ? (
+          <div className="text-sm text-red-600">
+            {error}
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {balances.map((balance, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <span className="text-lg">{balance.icon}</span>
+                  <div>
+                    <div className="font-medium">{balance.symbol}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {balance.type === "token" && "Native Token"}
+                      {balance.type === "nft" && "Minted NFTs"}
+                      {balance.type === "activity" && "Completed Transactions"}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-mono text-sm">{balance.balance}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }

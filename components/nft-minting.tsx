@@ -250,7 +250,11 @@ export function NFTMinting({
               functionName: "balanceOf",
               args: [walletClient.account.address],
             });
-            setUserNFTBalance(Number(balance));
+            const nftCount = Number(balance);
+            setUserNFTBalance(nftCount);
+            
+            // Store NFT count in localStorage for persistence
+            localStorage.setItem(`nft-balance-${walletClient.account.address}`, nftCount.toString());
           }
         }
       } catch (contractError) {
@@ -294,62 +298,74 @@ export function NFTMinting({
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Image className="h-5 w-5" />
-          NFT Minting
-        </CardTitle>
-        <CardDescription>
-          Mint free NFTs using your embedded wallet with gasless transactions
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <span className="font-medium">Mint Price:</span>
-            <p className="text-muted-foreground">{mintPrice} ETH</p>
+    <Card className="relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full"></div>
+      <CardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+            <Image className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <span className="font-medium">Your NFTs:</span>
-            <p className="text-muted-foreground">{userNFTBalance}</p>
+            <CardTitle className="text-lg">NFT Minting</CardTitle>
+            <CardDescription className="text-sm">
+              Mint free NFTs with gasless transactions
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="text-center p-3 rounded-lg bg-muted/50">
+            <div className="text-2xl font-bold text-primary">{mintPrice}</div>
+            <div className="text-xs text-muted-foreground">ETH Cost</div>
+          </div>
+          <div className="text-center p-3 rounded-lg bg-muted/50">
+            <div className="text-2xl font-bold text-primary">{userNFTBalance}</div>
+            <div className="text-xs text-muted-foreground">Your NFTs</div>
           </div>
         </div>
         
         <Button 
           onClick={handleMintNFT} 
           disabled={isMinting}
-          className="w-full"
+          className="w-full h-12 text-base font-medium"
+          size="lg"
         >
           {isMinting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               Minting NFT...
             </>
           ) : (
             <>
-              <Image className="mr-2 h-4 w-4" />
+              <Image className="mr-2 h-5 w-5" />
               Mint Free NFT
             </>
           )}
         </Button>
 
         {lastMintedTokenId && (
-          <div className="rounded-lg bg-green-50 p-3 text-sm">
-            <p className="font-medium text-green-800">
-              🎉 NFT #{lastMintedTokenId} minted successfully!
-            </p>
-            <p className="text-green-600">
-              Your NFT balance: {userNFTBalance}
+          <div className="rounded-lg bg-green-50 dark:bg-green-950/20 p-4 border border-green-200 dark:border-green-800">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center">
+                <span className="text-white text-xs">✓</span>
+              </div>
+              <p className="font-medium text-green-800 dark:text-green-200">
+                NFT #{lastMintedTokenId} minted!
+              </p>
+            </div>
+            <p className="text-sm text-green-600 dark:text-green-300">
+              Total NFTs: {userNFTBalance}
             </p>
           </div>
         )}
 
-        <div className="text-xs text-muted-foreground">
-          <p>
-            <strong>Free NFT Contract:</strong> FreeNFT contract is live on Base Sepolia. 
-            Mint price: 0 ETH. Gas fees are sponsored by ZeroDev paymaster.
-          </p>
+        <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="font-medium">Gasless & Free</span>
+          </div>
+          <p>Powered by ZeroDev paymaster on Base Sepolia</p>
         </div>
       </CardContent>
     </Card>

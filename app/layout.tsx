@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Providers from "@/lib/providers";
-import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ShadowDomProvider } from "@/lib/shadow-dom/shadow-context";
 
@@ -24,7 +23,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <body className={inter.className}>
         <Providers>
           <ShadowDomProvider>
-            <Header />
             {children}
             <Footer />
           </ShadowDomProvider>

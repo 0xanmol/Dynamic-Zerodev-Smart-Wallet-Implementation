@@ -50,6 +50,16 @@ export function useMintTokens() {
       if (!kernelClient) throw new Error("Kernel client not found");
 
       await kernelClient.waitForUserOperationReceipt({ hash });
+      
+      // Update DUSD balance in local storage
+      const address = await walletClient.getAddresses();
+      const userAddress = address[0];
+      if (userAddress) {
+        const currentBalance = localStorage.getItem(`dusd-balance-${userAddress}`) || "0";
+        const newBalance = Number(currentBalance) + amountDollars;
+        localStorage.setItem(`dusd-balance-${userAddress}`, newBalance.toString());
+      }
+      
       return hash;
     } catch (e: unknown) {
       console.log("Transaction failed:", e);

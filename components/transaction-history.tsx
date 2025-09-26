@@ -3,6 +3,7 @@
 import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
 import { useState, useEffect } from "react";
 import { ExternalLink } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface Transaction {
   hash: string;
@@ -79,25 +80,67 @@ export function TransactionHistory() {
 
   if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
     return (
-      <div className="rounded-lg border bg-card p-4">
-        <h3 className="mb-3 text-sm font-medium text-muted-foreground">Recent Transactions</h3>
-        <p className="text-sm text-muted-foreground">Connect wallet to view transactions</p>
-      </div>
+      <Card className="relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-500/20 to-transparent rounded-bl-full"></div>
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
+              <span className="text-orange-600 text-lg">📋</span>
+            </div>
+            <div>
+              <CardTitle className="text-lg">Transaction History</CardTitle>
+              <CardDescription className="text-sm">
+                Connect wallet to view transactions
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-6">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-2">
+              <span className="text-muted-foreground">📊</span>
+            </div>
+            <p className="text-sm text-muted-foreground">Connect your wallet to see transaction history</p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="rounded-lg border bg-card p-4">
-      <h3 className="mb-3 text-sm font-medium text-muted-foreground">Recent Transactions</h3>
+    <Card className="relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-500/20 to-transparent rounded-bl-full"></div>
+      <CardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center">
+            <span className="text-orange-600 text-lg">📋</span>
+          </div>
+          <div>
+            <CardTitle className="text-lg">Transaction History</CardTitle>
+            <CardDescription className="text-sm">
+              Your gasless transaction records
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
       
-      {transactions.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No transactions yet</p>
-      ) : (
-        <div className="space-y-3">
-          {transactions.slice(0, 5).map((tx, index) => (
-            <div key={index} className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="text-lg">{getTransactionIcon(tx.type)}</span>
+        {transactions.length === 0 ? (
+          <div className="text-center py-6">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-2">
+              <span className="text-muted-foreground">📄</span>
+            </div>
+            <p className="text-sm text-muted-foreground">No transactions yet</p>
+            <p className="text-xs text-muted-foreground mt-1">Start by minting tokens or NFTs</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {transactions.slice(0, 5).map((tx, index) => (
+              <div key={index} className="flex items-center justify-between p-3 rounded-lg bg-muted/30 hover:bg-muted/50 transition-colors">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center text-lg">
+                    {getTransactionIcon(tx.type)}
+                  </div>
                 <div>
                   <div className="text-sm font-medium capitalize">
                     {tx.type}
@@ -112,23 +155,38 @@ export function TransactionHistory() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className={`text-xs font-medium ${getStatusColor(tx.status)}`}>
-                  {tx.status}
-                </span>
-                <a
-                  href={getExplorerUrl(tx.hash)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <ExternalLink className="h-3 w-3" />
-                </a>
-              </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <div className={`w-2 h-2 rounded-full ${
+                      tx.status === 'success' ? 'bg-green-500' : 
+                      tx.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+                    }`}></div>
+                    <span className={`text-xs font-medium ${getStatusColor(tx.status)}`}>
+                      {tx.status}
+                    </span>
+                  </div>
+                  <a
+                    href={getExplorerUrl(tx.hash)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                </div>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+            
+            {transactions.length > 5 && (
+              <div className="text-center pt-2">
+                <p className="text-xs text-muted-foreground">
+                  Showing 5 of {transactions.length} transactions
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
