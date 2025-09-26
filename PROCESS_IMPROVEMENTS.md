@@ -12,10 +12,13 @@ The biggest time sink was figuring out ZeroDev's Account Abstraction. I spent ho
 ### 2. Contract Deployment Complexity
 I initially tried using Hardhat, but ran into ESM module conflicts and dependency hell. I ended up manually deploying contracts via Remix, which worked but was inefficient. The contract funding process was also confusing - I had to redeploy multiple times because I kept getting the constructor parameters wrong.
 
-### 3. UI/UX Polish Takes Time
+### 3. ZeroDev Dashboard Version Issues
+This was probably the most frustrating part. Dynamic still forces developers to use ZeroDev v1 dashboard, but it's been buggy and unreliable. I spent hours trying to deploy paymasters through the v1 dashboard - it kept failing, timing out, or showing inconsistent states. I had to reach out to the ZeroDev team directly, and even they acknowledged that the v1 dashboard was breaking. ZeroDev v2 dashboard has the same features but is much more stable, yet Dynamic hasn't updated their integration yet. This needs to be prioritized.
+
+### 4. UI/UX Polish Takes Time
 What started as a simple demo became a full dashboard with multiple tabs, responsive design, and proper error handling. Each "small" improvement took longer than expected, and I kept finding edge cases that needed attention.
 
-### 4. Documentation Gaps
+### 5. Documentation Gaps
 The Dynamic SDK documentation was good for basic integration, but I had to dig through Discord and GitHub issues to find solutions for advanced features like MFA and social recovery.
 
 ## 3 Things I'd Do Differently for Better Customer Experience
@@ -23,9 +26,10 @@ The Dynamic SDK documentation was good for basic integration, but I had to dig t
 ### 1. Create a Comprehensive Setup Wizard
 Instead of making customers figure out the Dynamic Dashboard configuration, ZeroDev setup, and contract deployment separately, I'd build an automated setup wizard that:
 - Guides them through Dynamic Dashboard configuration step-by-step
-- Automatically configures ZeroDev integration
+- Automatically configures ZeroDev integration (preferably v2 dashboard)
 - Provides one-click contract deployment scripts
 - Validates the entire setup before they start coding
+- **Critical**: Migrate to ZeroDev v2 dashboard to avoid the v1 reliability issues
 
 ### 2. Build a Template Library with Real Examples
 Rather than starting from scratch, I'd create a library of production-ready templates:

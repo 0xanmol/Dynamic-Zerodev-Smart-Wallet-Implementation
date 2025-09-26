@@ -87,6 +87,8 @@ I've built a comprehensive demo that directly addresses all the issues your team
 
 **Error Handling**: Implemented comprehensive error handling for common issues like insufficient balance, transaction timeouts, and paymaster errors. Users now get clear, actionable error messages instead of cryptic blockchain errors.
 
+**ZeroDev Dashboard Issues**: Currently, Dynamic requires using ZeroDev v1 dashboard, which has been experiencing reliability issues. Paymaster deployment can be problematic - I had to work directly with ZeroDev support to resolve dashboard bugs. ZeroDev v2 dashboard is more stable and has the same features, but Dynamic hasn't migrated yet. This is a known pain point that should be addressed.
+
 ## Setup Instructions
 
 ### Quick Start
