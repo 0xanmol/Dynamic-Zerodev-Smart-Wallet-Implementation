@@ -3,7 +3,7 @@
 import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
 import { useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 import { useState, useEffect, useCallback } from "react";
-import { getContractAddress, TOKEN_ABI } from "@/constants";
+import { getContractAddress, NFT_ABI } from "@/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
@@ -92,7 +92,7 @@ export function BalancesPanel() {
           } else {
             const nftCount = await baseSepoliaClient.readContract({
               address: nftContract,
-              abi: TOKEN_ABI,
+              abi: NFT_ABI,
               functionName: "balanceOf",
               args: [walletClient.account.address],
             });

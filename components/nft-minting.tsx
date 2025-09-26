@@ -6,83 +6,10 @@ import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Loader2, Image, ExternalLink } from "lucide-react";
 import { parseEther, formatEther } from "viem";
-
-// Simple NFT contract ABI for minting
-const NFT_ABI = [
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      }
-    ],
-    "name": "mint",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "mintPrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "tokenId",
-        "type": "uint256"
-      }
-    ],
-    "name": "tokenURI",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "balanceOf",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  }
-] as const;
+import { getContractAddress, NFT_ABI } from "@/constants";
 
 // Free NFT contract address on Base Sepolia
-const NFT_CONTRACT_ADDRESS = "0x275068e0610DefC70459cA40d45C95e3DCF50A10";
+const NFT_CONTRACT_ADDRESS = getContractAddress("84532", "NFT") || "0x275068e0610DefC70459cA40d45C95e3DCF50A10";
 
 interface NFTMintingProps {
   onTransactionStart?: () => void;
@@ -254,7 +181,7 @@ export function NFTMinting({
             setUserNFTBalance(nftCount);
             
             // Store NFT count in localStorage for persistence
-            localStorage.setItem(`nft-balance-${walletClient.account.address}`, nftCount.toString());
+            localStorage.setItem("nftCount", nftCount.toString());
           }
         }
       } catch (contractError) {
