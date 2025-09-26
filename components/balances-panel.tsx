@@ -96,7 +96,31 @@ export function BalancesPanel() {
           console.error("Failed to fetch ETH balance:", ethError);
         }
 
-            // Fetch NFT balance using chain-specific client
+        // Fetch DUSD balance
+        try {
+          const dusdContractAddress = getContractAddress(chainId.toString(), "USD");
+          if (dusdContractAddress) {
+            const dusdBalance = await chainClient.readContract({
+              address: dusdContractAddress,
+              abi: TOKEN_ABI,
+              functionName: "balanceOf",
+              args: [walletClient.account.address],
+            });
+            const dusdBalanceFormatted = (Number(dusdBalance) / Math.pow(10, 18)).toFixed(0);
+            demoBalances.push({
+              symbol: "DUSD",
+              balance: dusdBalanceFormatted,
+              type: "token",
+              icon: "💵"
+            });
+          } else {
+            console.log(`DUSD contract not found for chain ${chainId}`);
+          }
+        } catch (dusdError) {
+          console.error("Failed to fetch DUSD balance:", dusdError);
+        }
+
+        // Fetch NFT balance using chain-specific client
             try {
               const nftContract = getContractAddress(chainId.toString(), "NFT");
               if (!nftContract) {
