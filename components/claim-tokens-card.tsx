@@ -40,7 +40,7 @@ export function ClaimTokensCard({
           hash: txHash,
           type: "mint",
           amount: "100",
-          symbol: "ETH",
+          symbol: "DUSD",
           timestamp: Date.now(),
           status: "success"
         }
@@ -67,9 +67,9 @@ export function ClaimTokensCard({
             <span className="text-green-600 text-lg">💰</span>
           </div>
           <div>
-            <CardTitle className="text-lg">Get Test ETH</CardTitle>
+            <CardTitle className="text-lg">Claim DUSD</CardTitle>
             <CardDescription className="text-sm">
-              Get test ETH from faucets for gasless transactions
+              Get 100 DUSD tokens instantly
             </CardDescription>
           </div>
         </div>
@@ -77,7 +77,7 @@ export function ClaimTokensCard({
       <CardContent className="space-y-6">
         <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
           <div className="text-3xl font-bold text-green-600 dark:text-green-400">100</div>
-          <div className="text-sm text-green-600 dark:text-green-400 font-medium">Test ETH</div>
+          <div className="text-sm text-green-600 dark:text-green-400 font-medium">DUSD Tokens</div>
         </div>
         
         <Button
@@ -99,7 +99,7 @@ export function ClaimTokensCard({
           ) : (
             <>
               <span className="mr-2">💰</span>
-              Get Test ETH
+              Claim 100 DUSD
             </>
           )}
         </Button>

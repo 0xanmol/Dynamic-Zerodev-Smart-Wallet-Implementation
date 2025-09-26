@@ -1,14 +1,50 @@
 // Contract addresses
 export const CONTRACTS = {
   "84532": { // Base Sepolia
+    USD: "0x678d798938bd326d76e5db814457841d055560d0", // DUSD token
     NFT: "0x275068e0610DefC70459cA40d45C95e3DCF50A10",
   },
   "11155111": { // Ethereum Sepolia
+    USD: null, // No DUSD token deployed on Ethereum Sepolia
     NFT: "0x725aC76CBb32665d0CfA90F34d2D2AecB526ee0e", // FreeNFT contract
   },
 } as const;
 
-// Contract ABIs - Only NFT ABI needed since we use ETH for transfers
+// Contract ABIs
+export const TOKEN_ABI = [
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_amountDollars",
+        type: "uint256",
+      },
+    ],
+    name: "mint",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "balanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+] as const;
 
 // NFT contract ABI
 export const NFT_ABI = [

@@ -46,7 +46,7 @@ export function TransactionModal({
         {isSuccess ? (
           <>
             <p className="text-lg font-medium text-gray-600 mb-3">
-              Test ETH received
+              100 DUSD minted
             </p>
             <div className="w-full bg-[#e7edff] text-[#4779ff] rounded-lg px-6 py-3 mb-8">
               <p className="text-xs text-center">
