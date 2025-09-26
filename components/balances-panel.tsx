@@ -3,7 +3,7 @@
 import { useDynamicContext, isEthereumWallet } from "@/lib/dynamic";
 import { useIsLoggedIn } from "@dynamic-labs/sdk-react-core";
 import { useState, useEffect, useCallback } from "react";
-import { getContractAddress, NFT_ABI, getRpcUrl, getChainInfo } from "@/constants";
+import { getContractAddress, NFT_ABI, TOKEN_ABI, getRpcUrl, getChainInfo } from "@/constants";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCw } from "lucide-react";
@@ -58,7 +58,7 @@ export function BalancesPanel() {
               return;
             }
 
-            // Create a separate public client for reading contract data (not ZeroDev bundler)
+            // Gotcha: ZeroDev bundler RPC doesn't support regular contract calls - need separate client
             const rpcUrl = getRpcUrl(chainId);
             const chainInfo = getChainInfo(chainId);
             
@@ -99,14 +99,28 @@ export function BalancesPanel() {
         // Fetch DUSD balance
         try {
           const dusdContractAddress = getContractAddress(chainId.toString(), "USD");
+          
           if (dusdContractAddress) {
+            // Fetch DUSD decimals from contract
+            const dusdDecimals = await chainClient.readContract({
+              address: dusdContractAddress,
+              abi: TOKEN_ABI,
+              functionName: "decimals",
+            });
+            console.log(`DUSD Decimals for Chain ${chainId}:`, dusdDecimals);
+
             const dusdBalance = await chainClient.readContract({
               address: dusdContractAddress,
               abi: TOKEN_ABI,
               functionName: "balanceOf",
               args: [walletClient.account.address],
             });
-            const dusdBalanceFormatted = (Number(dusdBalance) / Math.pow(10, 18)).toFixed(0);
+            console.log(`DUSD Balance Raw for Chain ${chainId}:`, dusdBalance);
+            
+            // Gotcha: Base Sepolia DUSD has 6 decimals, not 18 - need to fetch from contract
+            const dusdBalanceFormatted = (Number(dusdBalance) / Math.pow(10, Number(dusdDecimals))).toFixed(2);
+            console.log(`DUSD Balance Formatted for Chain ${chainId}:`, dusdBalanceFormatted);
+            
             demoBalances.push({
               symbol: "DUSD",
               balance: dusdBalanceFormatted,
@@ -117,12 +131,13 @@ export function BalancesPanel() {
             console.log(`DUSD contract not found for chain ${chainId}`);
           }
         } catch (dusdError) {
-          console.error("Failed to fetch DUSD balance:", dusdError);
+          console.error(`Failed to fetch DUSD balance for chain ${chainId}:`, dusdError);
         }
 
         // Fetch NFT balance using chain-specific client
             try {
               const nftContract = getContractAddress(chainId.toString(), "NFT");
+              
               if (!nftContract) {
                 console.log(`NFT contract not found for chain ${chainId}, using localStorage fallback`);
                 const storedCount = localStorage.getItem(`nftCount_${chainId}`);
@@ -187,12 +202,17 @@ export function BalancesPanel() {
   }, [primaryWallet]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      fetchDemoBalances();
+    if (isLoggedIn && primaryWallet) {
+      // Add a small delay to ensure wallet is fully initialized
+      const timer = setTimeout(() => {
+        fetchDemoBalances();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     } else {
       setBalances([]);
     }
-  }, [isLoggedIn, fetchDemoBalances]);
+  }, [isLoggedIn, primaryWallet, fetchDemoBalances]);
 
   const handleRefresh = () => {
     if (isLoggedIn) {
@@ -217,7 +237,7 @@ export function BalancesPanel() {
   }
 
   return (
-    <Card className="w-full">
+    <Card className="w-full h-full">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           Demo Assets

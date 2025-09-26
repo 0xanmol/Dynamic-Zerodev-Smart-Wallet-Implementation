@@ -24,7 +24,7 @@ export function ClaimTokensCard({
   const { openOverlay, closeOverlay } = useShadowDom();
   const { network } = useDynamicContext();
 
-  // Check if DUSD is available on current chain
+  // Gotcha: DUSD only deployed on Base Sepolia, not Ethereum Sepolia
   const dusdAddress = network ? getContractAddress(network, "USD") : null;
   const isDusdAvailable = dusdAddress !== null;
 
@@ -68,7 +68,7 @@ export function ClaimTokensCard({
   };
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden flex flex-col h-full">
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-green-500/20 to-transparent rounded-bl-full"></div>
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
@@ -86,18 +86,27 @@ export function ClaimTokensCard({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="flex flex-col flex-grow space-y-4">
         <div className="text-center p-4 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800">
           <div className="text-3xl font-bold text-green-600 dark:text-green-400">100</div>
           <div className="text-sm text-green-600 dark:text-green-400 font-medium">DUSD Tokens</div>
         </div>
         
-        <Button
-          className="w-full h-12 text-base font-medium"
-          disabled={isPending || !network || !isDusdAvailable}
-          onClick={handleClick}
-          size="lg"
-        >
+        <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-2 h-2 rounded-full bg-green-500"></div>
+            <span className="font-medium">Free & Gasless</span>
+          </div>
+          <p>No gas fees, powered by ZeroDev paymaster</p>
+        </div>
+
+        <div className="mt-auto">
+          <Button
+            className="w-full h-12 text-base font-medium"
+            disabled={isPending || !network || !isDusdAvailable}
+            onClick={handleClick}
+            size="lg"
+          >
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
@@ -120,13 +129,6 @@ export function ClaimTokensCard({
             </>
           )}
         </Button>
-
-        <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="font-medium">Free & Gasless</span>
-          </div>
-          <p>No gas fees, powered by ZeroDev paymaster</p>
         </div>
       </CardContent>
     </Card>

@@ -70,10 +70,10 @@ export function Dashboard({ activeTab, onTabChange }: DashboardProps) {
         <div className="space-y-8">
               {/* Status Overview */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="w-full">
+                <div className="w-full flex">
                   <NetworkIndicator />
                 </div>
-                <div className="w-full">
+                <div className="w-full flex">
                   <BalancesPanel key={refreshKey} />
                 </div>
               </div>
@@ -86,7 +86,7 @@ export function Dashboard({ activeTab, onTabChange }: DashboardProps) {
                   <p className="text-muted-foreground">Try these features with zero gas fees</p>
                 </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
               <ClaimTokensCard 
                 onTransactionStart={() => console.log("Transaction started")}
                 onTransactionSuccess={() => {

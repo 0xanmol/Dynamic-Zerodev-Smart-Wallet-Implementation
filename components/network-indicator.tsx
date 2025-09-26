@@ -29,7 +29,9 @@ export function NetworkIndicator() {
       }
 
       // Add a small delay for wallet initialization
-      if (retryCount > 0) {
+      if (retryCount === 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } else {
         await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
       }
 
@@ -153,7 +155,7 @@ export function NetworkIndicator() {
   };
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden h-full">
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500/20 to-transparent rounded-bl-full"></div>
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">

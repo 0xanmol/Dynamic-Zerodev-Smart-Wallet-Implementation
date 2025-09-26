@@ -383,18 +383,18 @@ export function MFAManagement() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Passkey Setup */}
-            <div className="p-4 border rounded-lg space-y-3">
-              <div className="flex items-center gap-2">
+            <div className="p-4 border rounded-lg flex flex-col h-full">
+              <div className="flex items-center gap-2 mb-3">
                 <Key className="h-5 w-5 text-blue-600" />
                 <h3 className="font-medium">Passkey</h3>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground flex-grow mb-3">
                 Use your device's biometric authentication (Face ID, Touch ID, or Windows Hello)
               </p>
               <Button 
                 onClick={handleRegisterPasskey} 
                 disabled={isLoading}
-                className="w-full"
+                className="w-full mt-auto"
                 variant="outline"
               >
                 {isLoading ? "Setting up..." : "Add Passkey"}
@@ -402,18 +402,18 @@ export function MFAManagement() {
             </div>
 
             {/* TOTP Setup */}
-            <div className="p-4 border rounded-lg space-y-3">
-              <div className="flex items-center gap-2">
+            <div className="p-4 border rounded-lg flex flex-col h-full">
+              <div className="flex items-center gap-2 mb-3">
                 <Smartphone className="h-5 w-5 text-green-600" />
                 <h3 className="font-medium">Authenticator App</h3>
               </div>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground flex-grow mb-3">
                 Use apps like Google Authenticator, Authy, or 1Password
               </p>
               <Button 
                 onClick={handleRegisterTOTP} 
                 disabled={isLoading}
-                className="w-full"
+                className="w-full mt-auto"
                 variant="outline"
               >
                 {isLoading ? "Setting up..." : "Add Authenticator"}

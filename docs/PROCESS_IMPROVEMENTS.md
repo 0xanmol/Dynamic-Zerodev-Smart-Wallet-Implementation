@@ -1,25 +1,29 @@
 # Process Improvements for Customer Onboarding
 
-## My Experience Building This Demo
+## What I Learned Building This Demo
 
-When I first received Jeff's requirements, I thought it would be straightforward - just integrate Dynamic SDK, add some basic wallet functionality, and call it a day. Boy, was I wrong. The journey from initial setup to a working demo taught me valuable lessons about what customers really need and how to deliver it efficiently.
+When Jeff's team first asked for this demo, I thought "sure, this should be pretty straightforward." Just integrate Dynamic SDK, add some wallet functionality, and we're done. 
+
+I was wrong. Very wrong.
+
+The journey from "let's build a quick demo" to "here's a working application" taught me a lot about what customers actually need and where the friction points are.
 
 ## Key Challenges I Faced
 
-### 1. The ZeroDev Integration Nightmare
-The biggest time sink was figuring out ZeroDev's Account Abstraction. I spent hours debugging why transactions weren't confirming, only to discover I was using user operation hashes instead of actual transaction hashes. The documentation was scattered, and I had to piece together the correct flow from multiple sources.
+### 1. ZeroDev Integration Was a Headache
+The biggest time sink was figuring out ZeroDev's Account Abstraction flow. I spent hours debugging why transactions were being submitted but not confirming. Turns out I was using user operation hashes instead of actual transaction hashes from the receipt. The docs were scattered, and I had to piece together the correct flow from multiple sources.
 
-### 2. Contract Deployment Complexity
-I initially tried using Hardhat, but ran into ESM module conflicts and dependency hell. I ended up manually deploying contracts via Remix, which worked but was inefficient. The contract funding process was also confusing - I had to redeploy multiple times because I kept getting the constructor parameters wrong.
+### 2. Contract Deployment Got Messy
+I tried Hardhat first, but ran into ESM module conflicts and dependency hell. Ended up deploying manually through Remix, which actually worked better - I could see exactly what was happening. But the funding process was confusing, and I had to redeploy multiple times because I kept messing up the constructor parameters.
 
-### 3. ZeroDev Dashboard Version Issues
-This was probably the most frustrating part. Dynamic still forces developers to use ZeroDev v1 dashboard, but it's been buggy and unreliable. I spent hours trying to deploy paymasters through the v1 dashboard - it kept failing, timing out, or showing inconsistent states. I had to reach out to the ZeroDev team directly, and even they acknowledged that the v1 dashboard was breaking. ZeroDev v2 dashboard has the same features but is much more stable, yet Dynamic hasn't updated their integration yet. This needs to be prioritized.
+### 3. ZeroDev Dashboard Issues (This Needs Fixing)
+This was the most frustrating part. Dynamic still forces you to use ZeroDev v1 dashboard, and it's been buggy. I spent hours trying to deploy paymasters - it kept failing, timing out, or showing inconsistent states. I had to reach out to ZeroDev support directly, and even they admitted the v1 dashboard was breaking. ZeroDev v2 is much more stable, but Dynamic hasn't migrated yet. This is a real problem.
 
-### 4. UI/UX Polish Takes Time
-What started as a simple demo became a full dashboard with multiple tabs, responsive design, and proper error handling. Each "small" improvement took longer than expected, and I kept finding edge cases that needed attention.
+### 4. UI Polish Takes Way Longer Than Expected
+What started as a "simple demo" became a full dashboard with tabs, responsive design, and proper error handling. Each "small" improvement took longer than expected, and I kept finding edge cases that needed attention.
 
 ### 5. Documentation Gaps
-The Dynamic SDK documentation was good for basic integration, but I had to dig through Discord and GitHub issues to find solutions for advanced features like MFA and social recovery.
+Dynamic SDK docs were good for basic stuff, but I had to dig through Discord and GitHub issues to figure out advanced features like MFA and social recovery.
 
 ## 3 Things I'd Do Differently for Better Customer Experience
 

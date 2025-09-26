@@ -1,15 +1,14 @@
 "use client";
 
 import { useDynamicContext, isEthereumWallet, isZeroDevConnector } from "@/lib/dynamic";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Loader2, Image, ExternalLink } from "lucide-react";
 import { parseEther, formatEther } from "viem";
 import { getContractAddress, NFT_ABI } from "@/constants";
 
-// Free NFT contract address on Base Sepolia
-const NFT_CONTRACT_ADDRESS = getContractAddress("84532", "NFT") || "0x275068e0610DefC70459cA40d45C95e3DCF50A10";
+// NFT contract address will be determined dynamically based on current chain
 
 interface NFTMintingProps {
   onTransactionStart?: () => void;
@@ -56,9 +55,20 @@ export function NFTMinting({
         throw new Error("Kernel client not found");
       }
 
+      // Get chain ID and contract address
+      const chainId = walletClient.chain?.id;
+      if (!chainId) {
+        throw new Error("Could not determine chain ID");
+      }
+      const nftContractAddress = getContractAddress(chainId.toString(), "NFT");
+      if (!nftContractAddress) {
+        alert(`NFT contract not deployed on current chain (${chainId})`);
+        return;
+      }
+
       // Mint NFT using ZeroDev (free minting - no value required)
       const hash = await walletClient.writeContract({
-        address: NFT_CONTRACT_ADDRESS as `0x${string}`,
+        address: nftContractAddress as `0x${string}`,
         abi: NFT_ABI,
         functionName: "mint",
         args: [walletClient.account.address],
@@ -118,8 +128,11 @@ export function NFTMinting({
         });
         window.dispatchEvent(transactionEvent);
         
-        const baseScanUrl = `https://sepolia.basescan.org/tx/${actualTxHash}`;
-        alert(`🎉 NFT Minted Successfully!\n\nUser Operation Hash: ${hash}\nTransaction Hash: ${actualTxHash}\n\n✅ Your NFT has been minted and confirmed on the blockchain\n🔗 View on BaseScan: ${baseScanUrl}\n\nYour NFT balance: ${userNFTBalance + 1}`);
+        // Get the correct explorer URL based on chain
+        const explorerUrl = chainId === 84532 
+          ? `https://sepolia.basescan.org/tx/${actualTxHash}`
+          : `https://sepolia.etherscan.io/tx/${actualTxHash}`;
+        alert(`🎉 NFT Minted Successfully!\n\nUser Operation Hash: ${hash}\nTransaction Hash: ${actualTxHash}\n\n✅ Your NFT has been minted and confirmed on the blockchain\n🔗 View on Explorer: ${explorerUrl}\n\nYour NFT balance: ${userNFTBalance + 1}`);
         
         // Only call success after we have the real transaction hash
         onTransactionSuccess?.();
@@ -194,11 +207,11 @@ export function NFTMinting({
               setUserNFTBalance(nftCount);
               
               // Store NFT count in localStorage for persistence
-              localStorage.setItem(`nftCount_${walletClient.chain?.id || 84532}`, nftCount.toString());
+              localStorage.setItem(`nftCount_${chainId}`, nftCount.toString());
             } catch (balanceError) {
               console.log("Could not fetch NFT balance, using localStorage fallback");
               // Use localStorage fallback
-              const storedNftCount = localStorage.getItem(`nftCount_${walletClient.chain?.id || 84532}`);
+              const storedNftCount = localStorage.getItem(`nftCount_${chainId}`);
               if (storedNftCount) {
                 setUserNFTBalance(parseInt(storedNftCount, 10));
               }
@@ -217,12 +230,16 @@ export function NFTMinting({
     }
   };
 
-  // Fetch NFT data when wallet connects
-  useState(() => {
+  // Gotcha: Embedded wallets need initialization delay - useEffect was using useState before
+  useEffect(() => {
     if (primaryWallet && isEthereumWallet(primaryWallet)) {
-      fetchNFTData();
+      const timer = setTimeout(() => {
+        fetchNFTData();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
     }
-  });
+  }, [primaryWallet]);
 
   if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
     return (
@@ -246,7 +263,7 @@ export function NFTMinting({
   }
 
   return (
-    <Card className="relative overflow-hidden">
+    <Card className="relative overflow-hidden flex flex-col h-full">
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-primary/20 to-transparent rounded-bl-full"></div>
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
@@ -261,7 +278,7 @@ export function NFTMinting({
           </div>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="flex flex-col flex-grow space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center p-3 rounded-lg bg-muted/50">
             <div className="text-2xl font-bold text-primary">{mintPrice}</div>
@@ -272,25 +289,6 @@ export function NFTMinting({
             <div className="text-xs text-muted-foreground">Your NFTs</div>
           </div>
         </div>
-        
-        <Button 
-          onClick={handleMintNFT} 
-          disabled={isMinting}
-          className="w-full h-12 text-base font-medium"
-          size="lg"
-        >
-          {isMinting ? (
-            <>
-              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-              Minting NFT...
-            </>
-          ) : (
-            <>
-              <Image className="mr-2 h-5 w-5" />
-              Mint Free NFT
-            </>
-          )}
-        </Button>
 
         {lastMintedTokenId && (
           <div className="rounded-lg bg-green-50 dark:bg-green-950/20 p-4 border border-green-200 dark:border-green-800">
@@ -314,6 +312,27 @@ export function NFTMinting({
             <span className="font-medium">Gasless & Free</span>
           </div>
           <p>Powered by ZeroDev paymaster on Base Sepolia</p>
+        </div>
+        
+        <div className="mt-auto">
+          <Button 
+            onClick={handleMintNFT} 
+            disabled={isMinting}
+            className="w-full h-12 text-base font-medium"
+            size="lg"
+          >
+          {isMinting ? (
+            <>
+              <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+              Minting NFT...
+            </>
+          ) : (
+            <>
+              <Image className="mr-2 h-5 w-5" />
+              Mint Free NFT
+            </>
+          )}
+        </Button>
         </div>
       </CardContent>
     </Card>

@@ -1,26 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-contract SimpleStandardNFT {
-    // Token name and symbol
+contract FinalNFT {
     string public name = "Dynamic Demo NFT";
     string public symbol = "DDNFT";
-    
-    // Token counter
     uint256 private _tokenIdCounter;
-    
-    // Mint price (free)
     uint256 public mintPrice = 0;
-    
-    // Owner
     address public owner;
     
-    // Mappings
     mapping(uint256 => address) private _owners;
     mapping(address => uint256) private _balances;
-    mapping(uint256 => string) private _tokenURIs;
     
-    // Events
     event Transfer(address indexed from, address indexed to, uint256 indexed tokenId);
     event NFTMinted(address indexed to, uint256 indexed tokenId);
     
@@ -28,13 +18,11 @@ contract SimpleStandardNFT {
         owner = msg.sender;
     }
     
-    // Modifier for owner only
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the owner");
         _;
     }
     
-    // Mint function
     function mint(address to) public payable returns (uint256) {
         require(msg.value >= mintPrice, "Insufficient payment");
         
@@ -50,10 +38,9 @@ contract SimpleStandardNFT {
         return tokenId;
     }
     
-    // ERC721 functions
-    function balanceOf(address owner) public view returns (uint256) {
-        require(owner != address(0), "Balance query for zero address");
-        return _balances[owner];
+    function balanceOf(address account) public view returns (uint256) {
+        require(account != address(0), "Balance query for zero address");
+        return _balances[account];
     }
     
     function ownerOf(uint256 tokenId) public view returns (address) {
@@ -63,8 +50,15 @@ contract SimpleStandardNFT {
     }
     
     function tokenURI(uint256 tokenId) public view returns (string memory) {
-        require(_exists(tokenId), "URI query for nonexistent token");
-        return _tokenURIs[tokenId];
+        require(_owners[tokenId] != address(0), "URI query for nonexistent token");
+        
+        // Simple JSON metadata with a working image URL
+        return string(abi.encodePacked(
+            '{"name":"Dynamic Demo NFT #', _toString(tokenId), '",',
+            '"description":"A demo NFT minted with gasless transactions",',
+            '"image":"https://picsum.photos/400/400?random=', _toString(tokenId), '",',
+            '"attributes":[{"trait_type":"Token ID","value":"', _toString(tokenId), '"}]}'
+        ));
     }
     
     function totalSupply() public view returns (uint256) {
@@ -75,26 +69,31 @@ contract SimpleStandardNFT {
         return _tokenIdCounter;
     }
     
-    // Internal functions
-    function _exists(uint256 tokenId) internal view returns (bool) {
-        return _owners[tokenId] != address(0);
-    }
-    
-    // Owner functions
     function setMintPrice(uint256 _price) public onlyOwner {
         mintPrice = _price;
-    }
-    
-    function setTokenURI(uint256 tokenId, string memory _tokenURI) public onlyOwner {
-        require(_exists(tokenId), "URI set of nonexistent token");
-        _tokenURIs[tokenId] = _tokenURI;
     }
     
     function withdraw() public onlyOwner {
         uint256 balance = address(this).balance;
         require(balance > 0, "No funds to withdraw");
-        
         (bool success, ) = payable(owner).call{value: balance}("");
         require(success, "Withdrawal failed");
+    }
+    
+    function _toString(uint256 value) internal pure returns (string memory) {
+        if (value == 0) return "0";
+        uint256 temp = value;
+        uint256 digits;
+        while (temp != 0) {
+            digits++;
+            temp /= 10;
+        }
+        bytes memory buffer = new bytes(digits);
+        while (value != 0) {
+            digits -= 1;
+            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+            value /= 10;
+        }
+        return string(buffer);
     }
 }

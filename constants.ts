@@ -2,11 +2,11 @@
 export const CONTRACTS = {
   "84532": { // Base Sepolia
     USD: "0x678d798938bd326d76e5db814457841d055560d0", // DUSD token
-    NFT: "0x9fbeb7d8e95eDD3B1825eF1d9447B52e68cEa248", // StandardNFT contract
+    NFT: "0xCea441b6fB0695fC1DADC79Dd9A59Cf6a619f49f", // FinalNFT contract
   },
   "11155111": { // Ethereum Sepolia
     USD: "0x1F7daF8B1989A949c5f2d70340C234eF63aEE6F5", // DUSD token
-    NFT: "0xbA7ed67197681Ed3B9C63063A2CDD9EE2A21f175", // StandardNFT contract
+    NFT: "0xC949C74C0644B4ED7b9bBCF4560A46e01E3B8B5d", // FinalNFT contract
   },
 } as const;
 
@@ -39,6 +39,19 @@ export const TOKEN_ABI = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "decimals",
+    outputs: [
+      {
+        internalType: "uint8",
+        name: "",
+        type: "uint8",
       },
     ],
     stateMutability: "view",
@@ -103,7 +116,7 @@ export const NFT_ABI = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "owner",
+        "name": "account",
         "type": "address"
       }
     ],
@@ -113,6 +126,77 @@ export const NFT_ABI = [
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "ownerOf",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "nextTokenId",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
@@ -150,7 +234,8 @@ export function getContractAddress(
 }
 
 export function getChainInfo(chainId: number) {
-  return CHAIN_INFO[chainId as keyof typeof CHAIN_INFO] || {
+  // Gotcha: CHAIN_INFO keys are strings, but chainId comes as number
+  return CHAIN_INFO[chainId.toString() as keyof typeof CHAIN_INFO] || {
     name: "Unknown Network",
     explorer: "",
     rpc: "",

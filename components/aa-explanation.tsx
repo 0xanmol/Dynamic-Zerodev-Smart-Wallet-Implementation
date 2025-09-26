@@ -145,24 +145,51 @@ export function AAExplanation() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-sm mb-1">Smart Wallet Stack:</h4>
-              <ul className="text-xs text-muted-foreground space-y-1">
-                <li>• <strong>Dynamic SDK:</strong> Authentication and wallet management</li>
-                <li>• <strong>ZeroDev:</strong> Account abstraction infrastructure</li>
-                <li>• <strong>Base Sepolia:</strong> Test network for development</li>
-                <li>• <strong>EntryPoint v7:</strong> Account abstraction standard</li>
+            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+              <h4 className="font-semibold text-sm mb-2 text-foreground">Smart Wallet Stack:</h4>
+              <ul className="text-sm text-foreground/80 space-y-1.5">
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-medium">•</span>
+                  <span><strong className="text-foreground">Dynamic SDK:</strong> Authentication and wallet management</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-medium">•</span>
+                  <span><strong className="text-foreground">ZeroDev:</strong> Account abstraction infrastructure</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-medium">•</span>
+                  <span><strong className="text-foreground">Base Sepolia:</strong> Test network for development</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-medium">•</span>
+                  <span><strong className="text-foreground">EntryPoint v7:</strong> Account abstraction standard</span>
+                </li>
               </ul>
             </div>
             
-            <div className="p-3 bg-gray-50 rounded-lg">
-              <h4 className="font-medium text-sm mb-1">Transaction Flow:</h4>
-              <ol className="text-xs text-muted-foreground space-y-1 list-decimal list-inside">
-                <li>User initiates transaction (mint, send, etc.)</li>
-                <li>Dynamic SDK creates UserOperation</li>
-                <li>ZeroDev paymaster sponsors gas fees</li>
-                <li>Transaction executes on Base Sepolia</li>
-                <li>User sees success without paying gas</li>
+            <div className="p-4 bg-muted/30 dark:bg-muted/20 rounded-lg border border-border/50">
+              <h4 className="font-semibold text-sm mb-2 text-foreground">Transaction Flow:</h4>
+              <ol className="text-sm text-foreground/80 space-y-1.5 list-none">
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-medium">1</span>
+                  <span>User initiates transaction (mint, send, etc.)</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-medium">2</span>
+                  <span>Dynamic SDK creates UserOperation</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-medium">3</span>
+                  <span>ZeroDev paymaster sponsors gas fees</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-medium">4</span>
+                  <span>Transaction executes on Base Sepolia</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="flex-shrink-0 w-5 h-5 bg-primary/10 text-primary rounded-full flex items-center justify-center text-xs font-medium">5</span>
+                  <span>User sees success without paying gas</span>
+                </li>
               </ol>
             </div>
           </div>

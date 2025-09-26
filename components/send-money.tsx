@@ -24,6 +24,30 @@ export function SendMoney({
   const [amount, setAmount] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [lastTransactionHash, setLastTransactionHash] = useState<string | null>(null);
+  const [chainId, setChainId] = useState<number | null>(null);
+
+  // Update chainId when wallet changes
+  useEffect(() => {
+    const updateChainId = async () => {
+      if (primaryWallet && isEthereumWallet(primaryWallet)) {
+        // Add a small delay to ensure wallet is fully initialized
+        setTimeout(async () => {
+          try {
+            const walletClient = await primaryWallet.getWalletClient();
+            if (walletClient?.chain?.id) {
+              setChainId(walletClient.chain.id);
+            }
+          } catch (error) {
+            console.log("Failed to get chain ID:", error);
+          }
+        }, 1000);
+      } else {
+        setChainId(null);
+      }
+    };
+
+    updateChainId();
+  }, [primaryWallet]);
 
   const handleSendMoney = async () => {
     if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
@@ -55,6 +79,12 @@ export function SendMoney({
     try {
       const walletClient = await primaryWallet.getWalletClient();
       const publicClient = await primaryWallet.getPublicClient();
+      
+      // Update chainId for this transaction
+      const currentChainId = walletClient?.chain?.id;
+      if (currentChainId) {
+        setChainId(currentChainId);
+      }
 
       if (!walletClient || !publicClient) {
         throw new Error("Failed to get wallet or public client");
@@ -95,7 +125,7 @@ export function SendMoney({
         decimals: "18 (ETH)"
       });
 
-      // Send ETH using ZeroDev kernel client for gasless transactions
+      // Gotcha: Must use sendUserOperation for gasless, not sendTransaction
       console.log("Sending ETH using ZeroDev kernel client...");
       const hash = await kernelClient.sendUserOperation({
         calls: [{
@@ -151,7 +181,11 @@ export function SendMoney({
         localStorage.setItem("demo-transactions", JSON.stringify(existingTxs));
         
         onTransactionSuccess?.();
-        alert(`🎉 Gasless ETH transfer successful!\n\nTransaction Hash: ${actualTxHash}\n\nView on BaseScan: https://sepolia.basescan.org/tx/${actualTxHash}`);
+        // Get the correct explorer URL based on chain
+        const explorerUrl = chainId === 84532 
+          ? `https://sepolia.basescan.org/tx/${actualTxHash}`
+          : `https://sepolia.etherscan.io/tx/${actualTxHash}`;
+        alert(`🎉 Gasless ETH transfer successful!\n\nTransaction Hash: ${actualTxHash}\n\nView on Explorer: ${explorerUrl}`);
         
         // Clear form
         setRecipientAddress("");
@@ -167,7 +201,11 @@ export function SendMoney({
         if (error.message.includes("WaitForTransactionReceiptTimeoutError")) {
           // Transaction was submitted but timed out waiting for confirmation
           const txHash = error.message.match(/hash "([^"]+)"/)?.[1] || "unknown";
-          alert(`⏰ Transaction submitted but confirmation timed out.\n\nTransaction Hash: ${txHash}\n\nThis usually means:\n• Transaction is still processing (gasless transactions can take longer)\n• Check the transaction on BaseScan: https://sepolia.basescan.org/tx/${txHash}\n• The transaction might still succeed despite the timeout\n\nYou can check the transaction status manually.`);
+          // Get the correct explorer URL based on chain
+          const explorerUrl = chainId === 84532 
+            ? `https://sepolia.basescan.org/tx/${txHash}`
+            : `https://sepolia.etherscan.io/tx/${txHash}`;
+          alert(`⏰ Transaction submitted but confirmation timed out.\n\nTransaction Hash: ${txHash}\n\nThis usually means:\n• Transaction is still processing (gasless transactions can take longer)\n• Check the transaction on Explorer: ${explorerUrl}\n• The transaction might still succeed despite the timeout\n\nYou can check the transaction status manually.`);
           
           // Store the transaction hash even if we timed out
           setLastTransactionHash(txHash);
@@ -254,12 +292,15 @@ export function SendMoney({
               💰 ETH sent successfully!
             </p>
             <a 
-              href={`https://sepolia.basescan.org/tx/${lastTransactionHash}`} 
+              href={chainId === 84532 
+                ? `https://sepolia.basescan.org/tx/${lastTransactionHash}`
+                : `https://sepolia.etherscan.io/tx/${lastTransactionHash}`
+              } 
               target="_blank" 
               rel="noopener noreferrer" 
               className="flex items-center gap-1 text-blue-500 hover:underline"
             >
-              View on BaseScan <ExternalLink className="h-3 w-3" />
+              View on {chainId === 84532 ? 'BaseScan' : 'Etherscan'} <ExternalLink className="h-3 w-3" />
             </a>
           </div>
         )}
