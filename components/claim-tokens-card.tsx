@@ -7,6 +7,7 @@ import { TransactionModal } from "./transaction-modal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { getContractAddress } from "@/constants";
 
 interface ClaimTokensCardProps {
   onTransactionStart?: () => void;
@@ -23,9 +24,17 @@ export function ClaimTokensCard({
   const { openOverlay, closeOverlay } = useShadowDom();
   const { network } = useDynamicContext();
 
+  // Check if DUSD is available on current chain
+  const dusdAddress = network ? getContractAddress(network, "USD") : null;
+  const isDusdAvailable = dusdAddress !== null;
+
   const handleClick = async () => {
     if (isPending) return;
     if (!network) return;
+    if (!isDusdAvailable) {
+      alert("DUSD is not available on this network. Please switch to Base Sepolia to claim DUSD tokens.");
+      return;
+    }
 
     try {
       onTransactionStart?.();
@@ -69,7 +78,10 @@ export function ClaimTokensCard({
           <div>
             <CardTitle className="text-lg">Claim DUSD</CardTitle>
             <CardDescription className="text-sm">
-              Get 100 DUSD tokens instantly
+              {isDusdAvailable 
+                ? "Get 100 DUSD tokens instantly" 
+                : "Available only on Base Sepolia"
+              }
             </CardDescription>
           </div>
         </div>
@@ -82,7 +94,7 @@ export function ClaimTokensCard({
         
         <Button
           className="w-full h-12 text-base font-medium"
-          disabled={isPending || !network}
+          disabled={isPending || !network || !isDusdAvailable}
           onClick={handleClick}
           size="lg"
         >
@@ -95,6 +107,11 @@ export function ClaimTokensCard({
             <>
               <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               Loading...
+            </>
+          ) : !isDusdAvailable ? (
+            <>
+              <span className="mr-2">⚠️</span>
+              Switch to Base Sepolia
             </>
           ) : (
             <>
