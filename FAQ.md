@@ -1,8 +1,8 @@
 # Dynamic Embedded Wallet FAQ
 
-## 🏢 Enterprise Evaluation Questions
+## Enterprise Evaluation Questions
 
-### **User Experience & Onboarding**
+### User Experience & Onboarding
 
 **Q: How does the user onboarding experience compare to traditional wallets?**
 A: Dynamic embedded wallets eliminate the need for seed phrases, private key management, and gas fee understanding. Users sign in with email or social login, just like any Web2 application. The smart wallet is created automatically in the background.
@@ -13,7 +13,7 @@ A: Yes! Dynamic supports social recovery through email verification and social l
 **Q: What happens if a user forgets their password?**
 A: Since authentication is handled through email/social login, users can reset their passwords through standard Web2 recovery flows. The embedded wallet remains accessible once they regain account access.
 
-### **Security & Compliance**
+### Security & Compliance
 
 **Q: How secure are embedded wallets compared to hardware wallets?**
 A: Embedded wallets use smart contracts with customizable security rules. While hardware wallets provide the highest security for individual users, embedded wallets offer better UX with enterprise-grade security features like MFA, social recovery, and transaction limits.
@@ -31,7 +31,7 @@ A: Dynamic integrates with identity verification providers and can implement cus
 **Q: What about regulatory compliance in different jurisdictions?**
 A: Dynamic provides compliance tools and can integrate with regulatory reporting systems. The smart contract logic can be customized to meet specific jurisdictional requirements.
 
-### **Technical Integration**
+### Technical Integration
 
 **Q: How difficult is it to integrate Dynamic into our existing application?**
 A: Integration is straightforward with the Dynamic SDK. The demo shows a complete implementation in just a few components. Most integration work involves:
@@ -48,7 +48,7 @@ A: Dynamic supports multiple networks out of the box. The demo shows Base Sepoli
 **Q: What about mobile app integration?**
 A: Dynamic provides React Native and Flutter SDKs for mobile integration. The embedded wallet works consistently across web and mobile platforms.
 
-### **Cost & Economics**
+### Cost & Economics
 
 **Q: How much do gasless transactions cost us as the application provider?**
 A: Gas fees are sponsored by paymaster services like ZeroDev. Costs depend on:
@@ -69,7 +69,7 @@ A: Dynamic offers flexible pricing based on:
 
 Contact Dynamic sales for enterprise pricing details.
 
-### **Scalability & Performance**
+### Scalability & Performance
 
 **Q: How does this scale with our user base?**
 A: Dynamic's infrastructure is designed for enterprise scale:
@@ -92,7 +92,7 @@ A: Smart contract wallets can implement:
 - Gas optimization strategies
 - MEV protection mechanisms
 
-### **Development & Maintenance**
+### Development & Maintenance
 
 **Q: How much ongoing maintenance is required?**
 A: Minimal maintenance required:
@@ -115,7 +115,7 @@ A: Dynamic provides:
 - Production environments for live deployment
 - Comprehensive testing tools and documentation
 
-### **Migration & Adoption**
+### Migration & Adoption
 
 **Q: How do we migrate existing users to embedded wallets?**
 A: Migration strategies include:
@@ -138,7 +138,7 @@ A: The demo includes educational components that explain:
 - Security features and best practices
 - Transaction flow and gas sponsorship
 
-### **Advanced Features**
+### Advanced Features
 
 **Q: Can we implement custom transaction logic?**
 A: Yes! Smart contract wallets support:
@@ -161,7 +161,7 @@ A: Yes! Dynamic can integrate with:
 - Credit card systems
 - Cryptocurrency exchanges
 
-### **Support & Documentation**
+### Support & Documentation
 
 **Q: What kind of support is available?**
 A: Dynamic provides:
@@ -184,9 +184,9 @@ A: Dynamic offers:
 - Code review and optimization
 - Ongoing technical consultation
 
-## 🚀 Getting Started
+## Getting Started
 
-### **Next Steps for Evaluation**
+### Next Steps for Evaluation
 
 1. **Test the Demo**: Run the provided demo to experience the UX
 2. **Review Documentation**: Study the implementation details
@@ -194,7 +194,7 @@ A: Dynamic offers:
 4. **Pilot Program**: Plan a small-scale pilot with your team
 5. **Production Planning**: Design your production implementation
 
-### **Contact Information**
+### Contact Information
 
 - **Dynamic Sales**: [sales@dynamic.xyz](mailto:sales@dynamic.xyz)
 - **Technical Support**: [Discord Community](https://discord.gg/dynamic)
