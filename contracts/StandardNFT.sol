@@ -55,9 +55,9 @@ contract StandardNFT {
     }
     
     // ERC721 functions
-    function balanceOf(address owner) public view returns (uint256) {
-        require(owner != address(0), "Balance query for zero address");
-        return _balances[owner];
+    function balanceOf(address account) public view returns (uint256) {
+        require(account != address(0), "Balance query for zero address");
+        return _balances[account];
     }
     
     function ownerOf(uint256 tokenId) public view returns (address) {
