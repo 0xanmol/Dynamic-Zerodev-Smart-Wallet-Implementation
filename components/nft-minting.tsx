@@ -75,15 +75,26 @@ export function NFTMinting({
         // In a real contract, you'd parse the Transfer event
         const publicClient = await primaryWallet.getPublicClient();
         if (publicClient) {
-          const newBalance = await publicClient.readContract({
-            address: NFT_CONTRACT_ADDRESS as `0x${string}`,
-            abi: NFT_ABI,
-            functionName: "balanceOf",
-            args: [walletClient.account.address],
-          });
-          
-          setUserNFTBalance(Number(newBalance));
-          setLastMintedTokenId(Number(newBalance)); // Simplified
+          try {
+            const newBalance = await publicClient.readContract({
+              address: NFT_CONTRACT_ADDRESS as `0x${string}`,
+              abi: NFT_ABI,
+              functionName: "balanceOf",
+              args: [walletClient.account.address],
+            });
+            
+            setUserNFTBalance(Number(newBalance));
+            setLastMintedTokenId(Number(newBalance)); // Simplified
+          } catch (balanceError) {
+            console.log("Could not fetch NFT balance, using localStorage fallback");
+            // Use localStorage fallback
+            const storedNftCount = localStorage.getItem(`nftCount_${walletClient.chain?.id || 84532}`);
+            const currentCount = storedNftCount ? parseInt(storedNftCount, 10) : 0;
+            const newCount = currentCount + 1;
+            setUserNFTBalance(newCount);
+            setLastMintedTokenId(newCount);
+            localStorage.setItem(`nftCount_${walletClient.chain?.id || 84532}`, newCount.toString());
+          }
         }
         
         // Store transaction in localStorage for demo
@@ -172,17 +183,26 @@ export function NFTMinting({
           // Get user's NFT balance
           const walletClient = await primaryWallet.getWalletClient();
           if (walletClient) {
-            const balance = await publicClient.readContract({
-              address: NFT_CONTRACT_ADDRESS as `0x${string}`,
-              abi: NFT_ABI,
-              functionName: "balanceOf",
-              args: [walletClient.account.address],
-            });
-            const nftCount = Number(balance);
-            setUserNFTBalance(nftCount);
-            
-            // Store NFT count in localStorage for persistence
-            localStorage.setItem("nftCount", nftCount.toString());
+            try {
+              const balance = await publicClient.readContract({
+                address: NFT_CONTRACT_ADDRESS as `0x${string}`,
+                abi: NFT_ABI,
+                functionName: "balanceOf",
+                args: [walletClient.account.address],
+              });
+              const nftCount = Number(balance);
+              setUserNFTBalance(nftCount);
+              
+              // Store NFT count in localStorage for persistence
+              localStorage.setItem(`nftCount_${walletClient.chain?.id || 84532}`, nftCount.toString());
+            } catch (balanceError) {
+              console.log("Could not fetch NFT balance, using localStorage fallback");
+              // Use localStorage fallback
+              const storedNftCount = localStorage.getItem(`nftCount_${walletClient.chain?.id || 84532}`);
+              if (storedNftCount) {
+                setUserNFTBalance(parseInt(storedNftCount, 10));
+              }
+            }
           }
         }
       } catch (contractError) {
