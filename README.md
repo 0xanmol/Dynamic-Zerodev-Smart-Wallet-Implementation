@@ -4,10 +4,19 @@ A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abs
 
 ## Features
 
+This demo addresses all concerns raised by Jeff's enterprise team:
+
+1. **NFT Minting with Embedded Wallets** - Complete gasless NFT minting functionality
+2. **Multi-chain Support** - Works on Base Sepolia and Ethereum Sepolia (expandable to all Dynamic-supported chains)
+3. **Account Abstraction Explained** - Clear explanation of how gas fees are handled
+4. **Enhanced Security Features** - MFA, passkeys, and social recovery options
+5. **Clear Money Transfer** - Simple, intuitive interface for sending ETH between users
+
+### Technical Implementation
 - **Dynamic Embedded Wallets**: Seamless wallet connection and management
 - **ZeroDev Account Abstraction**: Gasless transactions with sponsored gas fees
 - **NFT Minting**: Free NFT minting with real blockchain transactions
-- **Token Operations**: Claim USDC tokens and send money
+- **Token Operations**: Claim DUSD tokens and send money
 - **Real-time Balance Tracking**: Live balance updates and transaction history
 - **Modern UI**: Clean, responsive interface with dark/light theme support
 
