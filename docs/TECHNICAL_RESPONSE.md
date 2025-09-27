@@ -13,7 +13,7 @@ I've built a demo that tackles all the issues your team raised. It's been a jour
 1. **"We need to mint NFTs using Dynamic's embedded wallet"**
    - Built NFT minting that actually works on-chain
    - Users just click and mint - no private keys, no gas fees
-   - Real transactions on Base Sepolia (you can verify on BaseScan)
+   - Real transactions on Base Sepolia & Ethereum Sepolia (you can verify on Block explorer)
    - Shows balance updates in real-time
 
 2. **"We need a clear explanation of how Account Abstraction works"**
@@ -31,21 +31,20 @@ I've built a demo that tackles all the issues your team raised. It's been a jour
 4. **"We need a clear way to send money between users"**
    - Simple send money interface
    - Validates addresses and checks balances
-   - Shows transaction links to BaseScan
+   - Shows transaction links to BaseScan and Etherscan
    - Handles errors gracefully (learned this the hard way)
 
 ## What You Can Actually Test
 
 ### The Dashboard
 - **Wallet Tab**: All the transaction stuff
-- **How It Works Tab**: Explains the AA flow (this was important to get right)
+- **How It Works Tab**: Explains the AA flow 
 - **Security Tab**: Shows what security features are active
 
 ### The Gasless Magic
 - Mint 100 DUSD tokens - completely free for users
 - ZeroDev paymaster picks up the gas tab
 - Transactions show up in real-time
-- Links to BaseScan so you can verify they're real
 
 ### The UX Stuff
 - Works on mobile and desktop
@@ -100,15 +99,19 @@ npm run dev
 - **Production ready**: Enterprise security features
 - **Comprehensive docs**: Full implementation guide
 
-## The Real Challenges I Faced
+## Potential Challenges & Solutions
 
-**ZeroDev User Operations**: This was the biggest headache. I was getting transactions submitted but they weren't confirming. Turns out I was using user operation hashes instead of the actual transaction hashes from the receipt. Spent hours debugging this before I figured it out.
+If you run into issues during implementation, here are some common gotchas and where to find more details:
 
-**Contract Deployment**: Hardhat was giving me ESM module conflicts, so I ended up deploying manually through Remix. Actually worked out better - I could see exactly what was happening during deployment.
+**ZeroDev Integration**: The user operation flow can be tricky - make sure you're using the actual transaction hash from the receipt, not the user operation hash. See `DEVELOPMENT_NOTES.md` for the technical details.
 
-**UI Polish**: Started as a basic demo, but kept finding edge cases that needed fixing. Loading states, error handling, responsive design - each "small" improvement took longer than expected.
+**Contract Deployment**: If you hit ESM conflicts with Hardhat, manual deployment via Remix works well and gives you better visibility into the process.
 
-**ZeroDev Dashboard Problems**: This is a real issue. Dynamic still forces you to use ZeroDev v1 dashboard, and it's been buggy. I had to reach out to ZeroDev support directly because paymaster deployment kept failing. They even acknowledged the v1 dashboard was breaking. ZeroDev v2 is much more stable, but Dynamic hasn't migrated yet. This needs to be fixed.
+**UI/UX Polish**: The "simple" improvements like loading states and error handling tend to take longer than expected. The code has strategic comments in the tricky parts to help.
+
+**ZeroDev Dashboard Issues**: Currently Dynamic requires ZeroDev v1 dashboard which has reliability issues. ZeroDev v2 is more stable but Dynamic hasn't migrated yet.
+
+For detailed architecture and implementation notes, check out `ARCHITECTURE.md` and `DEVELOPMENT_NOTES.md`. The codebase has comments in the important parts where I ran into gotchas.
 
 ## What's Next
 

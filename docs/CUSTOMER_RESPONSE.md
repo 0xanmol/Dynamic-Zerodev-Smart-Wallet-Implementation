@@ -187,7 +187,7 @@ The demo is fully functional and ready for your team to test. All the issues you
 
 *Built to solve your enterprise Web3 challenges*
 
-**Contact**: [Your contact info]  
-**Demo**: Available for testing  
-**Repository**: [GitHub link]  
+**Contact**: https://t.me/anmolaroraeth  
+**Demo**: <LINK>  
+**Repository**: https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation/
 **Documentation**: See README.md for complete setup guide

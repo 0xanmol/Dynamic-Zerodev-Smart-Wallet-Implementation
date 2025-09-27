@@ -9,7 +9,7 @@
 - **Tailwind CSS**: Fast UI development, and the design system keeps things consistent
 
 ### Smart Contract Strategy
-- **Manual Deployment via Remix**: Hardhat had ESM conflicts, Remix provided better visibility
+- **Manual Deployment via Remix**: For contract as simple as the ones we deployed for this project, setting up Hardhat locally might lead to unnecessary errors like ESM conflicts, Remix provides quicker turnaround
 - **ERC721 for NFTs**: Standard NFT contract with free minting capability
 - **ERC20 for DUSD**: Custom token with 6 decimals on Base Sepolia, 18 on Ethereum Sepolia
 - **ZeroDev Integration**: EntryPoint v7 for Account Abstraction
@@ -18,8 +18,17 @@
 
 ### 1. ZeroDev User Operation Flow
 **What happened**: Transactions were being submitted but not confirming
+
 **The issue**: I was using user operation hashes instead of actual transaction hashes
+
 **How I fixed it**: Proper handling with `kernelClient.waitForUserOperationReceipt()`
+
+### 2. ZeroDev Dashboard Reliability Issues
+**What happened**: Paymaster deployment kept failing through the v1 dashboard
+
+**The issue**: Dynamic still forces you to use ZeroDev v1 dashboard, which has been buggy
+
+**How I fixed it**: Had to reach out to ZeroDev support directly - they acknowledged the v1 dashboard was breaking. ZeroDev v2 is much more stable, but Dynamic hasn't migrated yet.
 
 ```typescript
 // Gotcha: Must use sendUserOperation for gasless, not sendTransaction
@@ -32,7 +41,7 @@ const hash = await kernelClient.sendUserOperation({
 });
 ```
 
-### 2. Contract Balance Fetching
+### 3. Contract Balance Fetching
 **What happened**: ZeroDev bundler RPC doesn't support regular contract calls
 **The issue**: I was trying to read contract data through the bundler RPC
 **How I fixed it**: Created a separate public client for contract reads
@@ -45,7 +54,7 @@ const chainClient = createPublicClient({
 });
 ```
 
-### 3. Token Decimals Handling
+### 4. Token Decimals Handling
 **What happened**: Base Sepolia DUSD has 6 decimals, Ethereum Sepolia has 18
 **The issue**: I was assuming 18 decimals for all tokens
 **How I fixed it**: Fetch decimals dynamically from the contract
@@ -59,7 +68,7 @@ const dusdDecimals = await chainClient.readContract({
 });
 ```
 
-### 4. Embedded Wallet Initialization
+### 5. Embedded Wallet Initialization
 **What happened**: Components were trying to fetch data before wallet was ready
 **The issue**: Race condition between wallet connection and data fetching
 **How I fixed it**: Added initialization delays and proper useEffect usage
