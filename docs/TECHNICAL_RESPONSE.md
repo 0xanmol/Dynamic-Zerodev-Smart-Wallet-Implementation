@@ -111,7 +111,7 @@ If you run into issues during implementation, here are some common gotchas and w
 
 **ZeroDev Dashboard Issues**: Currently Dynamic requires ZeroDev v1 dashboard which has reliability issues. ZeroDev v2 is more stable but Dynamic hasn't migrated yet.
 
-For detailed architecture and implementation notes, check out `ARCHITECTURE.md` and `DEVELOPMENT_NOTES.md`. The codebase has comments in the important parts where I ran into gotchas.
+For detailed architecture and implementation notes, check out `ARCHITECTURE.md`. The codebase has comments in the important parts where I ran into gotchas.
 
 ## What's Next
 

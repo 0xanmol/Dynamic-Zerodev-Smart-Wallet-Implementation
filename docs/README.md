@@ -48,24 +48,17 @@ This directory contains all the written materials for the Dynamic + ZeroDev demo
 ## File Descriptions
 
 ### Core Documentation
-- **TECHNICAL_RESPONSE.md**: Main response to Jeff's team in Slack format
-- **CUSTOMER_RESPONSE.md**: Detailed technical response with full implementation details
+- **TECHNICAL_RESPONSE.md**: Slack-style response to Jeff's team
 - **FAQ.md**: Enterprise evaluation questions and answers
-
-### Demo Materials
 - **LOOM_VIDEO_SCRIPT.md**: 5-7 minute video script for demo walkthrough
-- **SETUP_GUIDE.md**: Step-by-step setup instructions for Jeff's team
-
-### Technical Documentation
-- **ARCHITECTURE.md**: System architecture and technical design
-- **DEVELOPMENT_NOTES.md**: Implementation details, gotchas, and lessons learned
 - **PROCESS_IMPROVEMENTS.md**: Process improvements for future customer onboarding
+- **ARCHITECTURE.md**: System architecture and technical design
 
 ## Quick Start for Jeff's Team
 
 1. **Read the Technical Response**: Start with [TECHNICAL_RESPONSE.md](./TECHNICAL_RESPONSE.md)
 2. **Review the FAQ**: Check [FAQ.md](./FAQ.md) for enterprise concerns
-3. **Follow Setup Guide**: Use [SETUP_GUIDE.md](./SETUP_GUIDE.md) to run the demo
+3. **Follow Setup Instructions**: See main [README.md](../README.md) for setup
 4. **Watch Demo Video**: Follow [LOOM_VIDEO_SCRIPT.md](./LOOM_VIDEO_SCRIPT.md) for walkthrough
 5. **Explore Architecture**: Review [ARCHITECTURE.md](./ARCHITECTURE.md) for technical details
 
@@ -105,10 +98,10 @@ This directory contains all the written materials for the Dynamic + ZeroDev demo
 4. **Plan integration** with existing systems
 
 ### For Technical Evaluation
-1. **Review architecture** and design decisions
+1. **Review the code** and implementation
 2. **Test multi-chain functionality**
-3. **Evaluate security implementation**
-4. **Assess scalability considerations**
+3. **Evaluate security features**
+4. **Check strategic comments** in the codebase
 
 ## Notes for CTO Review
 
@@ -117,7 +110,6 @@ This documentation demonstrates:
 - **Production considerations** for enterprise deployment
 - **Strategic technical decisions** with clear reasoning
 - **Comprehensive error handling** and user experience
-- **Scalable architecture** for future enhancements
 
 The code includes strategic comments only for gotchas and complex logic, showing thoughtful development without over-documentation.
 
