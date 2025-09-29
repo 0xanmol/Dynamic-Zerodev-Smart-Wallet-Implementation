@@ -51,7 +51,8 @@ export function ClaimTokensCard({
           amount: "100",
           symbol: "DUSD",
           timestamp: Date.now(),
-          status: "success"
+          status: "success",
+          chainId: Number(network)
         }
       });
       window.dispatchEvent(transactionEvent);
@@ -73,13 +74,13 @@ export function ClaimTokensCard({
       <CardHeader className="pb-4">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-            <span className="text-green-600 text-lg">💰</span>
+            <span className="text-green-600 text-lg font-bold">$</span>
           </div>
           <div>
             <CardTitle className="text-lg">Claim DUSD</CardTitle>
             <CardDescription className="text-sm">
               {isDusdAvailable 
-                ? "Get 100 DUSD tokens instantly" 
+                ? "Claim 100 DUSD tokens gaslessly" 
                 : "Available only on Base Sepolia"
               }
             </CardDescription>
@@ -119,12 +120,12 @@ export function ClaimTokensCard({
             </>
           ) : !isDusdAvailable ? (
             <>
-              <span className="mr-2">⚠️</span>
+              <span className="mr-2">!</span>
               Switch to Base Sepolia
             </>
           ) : (
             <>
-              <span className="mr-2">💰</span>
+              <span className="mr-2 font-bold">$</span>
               Claim 100 DUSD
             </>
           )}

@@ -108,6 +108,9 @@ export function NFTMinting({
         }
         
         // Store transaction in localStorage for demo
+        const currentChainId = walletClient.chain?.id || publicClient.chain?.id || chainId;
+        console.log("Storing NFT transaction with chainId:", currentChainId);
+        
         const txData = {
           hash: actualTxHash, // Use the actual transaction hash
           type: "nft_mint",
@@ -115,12 +118,12 @@ export function NFTMinting({
           symbol: "ETH",
           timestamp: Date.now(),
           status: "success" as const,
-          chainId: walletClient.chain?.id || publicClient.chain?.id,
+          chainId: currentChainId,
         };
         
-        const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");
+        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
         existingTxs.unshift(txData);
-        localStorage.setItem("demo-transactions", JSON.stringify(existingTxs));
+        localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
         
         // Emit transaction event for other components
         const transactionEvent = new CustomEvent("new-transaction", {
@@ -151,9 +154,9 @@ export function NFTMinting({
           status: "pending" as const,
         };
         
-        const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");
+        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
         existingTxs.unshift(txData);
-        localStorage.setItem("demo-transactions", JSON.stringify(existingTxs));
+        localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
         
         // Emit transaction event for other components
         const transactionEvent = new CustomEvent("new-transaction", {

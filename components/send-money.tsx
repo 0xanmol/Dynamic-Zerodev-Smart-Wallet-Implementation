@@ -165,6 +165,9 @@ export function SendMoney({
         setLastTransactionHash(actualTxHash);
         
         // Store transaction in localStorage for demo
+        const currentChainId = walletClient.chain?.id || publicClient.chain?.id || chainId;
+        console.log("Storing transaction with chainId:", currentChainId);
+        
         const txData = {
           hash: actualTxHash,
           type: "send_money",
@@ -173,12 +176,12 @@ export function SendMoney({
           recipient: recipientAddress,
           timestamp: Date.now(),
           status: "success" as const,
-          chainId: walletClient.chain?.id || publicClient.chain?.id,
+          chainId: currentChainId,
         };
         
-        const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");
+        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
         existingTxs.unshift(txData);
-        localStorage.setItem("demo-transactions", JSON.stringify(existingTxs));
+        localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
         
         onTransactionSuccess?.();
         // Get the correct explorer URL based on chain
@@ -210,11 +213,11 @@ export function SendMoney({
           // Store the transaction hash even if we timed out
           setLastTransactionHash(txHash);
         } else if (error.message.includes("Insufficient ETH balance")) {
-          alert(`❌ ${error.message}\n\nPlease get more ETH from a faucet or reduce the amount you're trying to send.`);
+          alert(`Error: ${error.message}\n\nPlease get more ETH from a faucet or reduce the amount you're trying to send.`);
         } else if (error.message.includes("Cannot destructure property 'authorization'")) {
-          alert("❌ ZeroDev paymaster error: Please check your paymaster configuration in the ZeroDev dashboard.");
+          alert("ZeroDev paymaster error: Please check your paymaster configuration in the ZeroDev dashboard.");
         } else if (error.message.includes("User rejected the request")) {
-          alert("❌ Transaction was rejected by user.");
+          alert("Transaction was rejected by user.");
         } else if (error.message.includes("Transaction expected to fail")) {
           alert("❌ Transaction expected to fail. This usually means:\n• You don't have enough ETH\n• Invalid recipient address\n\nCheck your balances and try again.");
         } else if (error.message.includes("execution reverted")) {
@@ -289,7 +292,7 @@ export function SendMoney({
         {lastTransactionHash && (
           <div className="text-sm text-muted-foreground mt-4">
             <p className="font-medium text-green-800">
-              💰 ETH sent successfully!
+              ETH sent successfully!
             </p>
             <a 
               href={chainId === 84532 

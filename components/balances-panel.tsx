@@ -14,7 +14,6 @@ interface DemoBalance {
   symbol: string;
   balance: string;
   type: "token" | "nft" | "activity";
-  icon: string;
 }
 
 export function BalancesPanel() {
@@ -89,50 +88,48 @@ export function BalancesPanel() {
           demoBalances.push({
             symbol: "ETH",
             balance: ethBalanceFormatted,
-            type: "token",
-            icon: "💎"
+            type: "token"
           });
         } catch (ethError) {
           console.error("Failed to fetch ETH balance:", ethError);
         }
 
-        // Fetch DUSD balance
-        try {
-          const dusdContractAddress = getContractAddress(chainId.toString(), "USD");
-          
-          if (dusdContractAddress) {
-            // Fetch DUSD decimals from contract
-            const dusdDecimals = await chainClient.readContract({
-              address: dusdContractAddress,
-              abi: TOKEN_ABI,
-              functionName: "decimals",
-            });
-            console.log(`DUSD Decimals for Chain ${chainId}:`, dusdDecimals);
+            // Fetch DUSD balance from blockchain
+            try {
+              const dusdContractAddress = getContractAddress(chainId.toString(), "USD");
+              
+              if (dusdContractAddress) {
+                const dusdDecimals = await chainClient.readContract({
+                  address: dusdContractAddress,
+                  abi: TOKEN_ABI,
+                  functionName: "decimals",
+                });
+                console.log(`DUSD Decimals for Chain ${chainId}:`, dusdDecimals);
 
-            const dusdBalance = await chainClient.readContract({
-              address: dusdContractAddress,
-              abi: TOKEN_ABI,
-              functionName: "balanceOf",
-              args: [walletClient.account.address],
-            });
-            console.log(`DUSD Balance Raw for Chain ${chainId}:`, dusdBalance);
-            
-            // Gotcha: Base Sepolia DUSD has 6 decimals, not 18 - need to fetch from contract
-            const dusdBalanceFormatted = (Number(dusdBalance) / Math.pow(10, Number(dusdDecimals))).toFixed(2);
-            console.log(`DUSD Balance Formatted for Chain ${chainId}:`, dusdBalanceFormatted);
-            
-            demoBalances.push({
-              symbol: "DUSD",
-              balance: dusdBalanceFormatted,
-              type: "token",
-              icon: "💵"
-            });
-          } else {
-            console.log(`DUSD contract not found for chain ${chainId}`);
-          }
-        } catch (dusdError) {
-          console.error(`Failed to fetch DUSD balance for chain ${chainId}:`, dusdError);
-        }
+                const dusdBalance = await chainClient.readContract({
+                  address: dusdContractAddress,
+                  abi: TOKEN_ABI,
+                  functionName: "balanceOf",
+                  args: [walletClient.account.address],
+                });
+                console.log(`DUSD Balance Raw for Chain ${chainId}:`, dusdBalance);
+                
+                // Format DUSD balance based on actual contract decimals
+                const dusdBalanceFormatted = (Number(dusdBalance) / Math.pow(10, Number(dusdDecimals))).toFixed(2);
+                console.log(`DUSD Balance Formatted for Chain ${chainId}:`, dusdBalanceFormatted);
+                console.log(`DUSD Raw Balance: ${dusdBalance}, Decimals: ${dusdDecimals}`);
+                
+                demoBalances.push({
+                  symbol: "DUSD",
+                  balance: dusdBalanceFormatted,
+                  type: "token"
+                });
+              } else {
+                console.log(`DUSD contract not found for chain ${chainId}`);
+              }
+            } catch (dusdError) {
+              console.error(`Failed to fetch DUSD balance for chain ${chainId}:`, dusdError);
+            }
 
         // Fetch NFT balance using chain-specific client
             try {
@@ -146,8 +143,7 @@ export function BalancesPanel() {
                 demoBalances.push({
                   symbol: "NFTs",
                   balance: nftCountNumber.toString(),
-                  type: "nft",
-                  icon: "🖼️"
+                  type: "nft"
                 });
               } else {
                 const nftCount = await chainClient.readContract({
@@ -165,8 +161,7 @@ export function BalancesPanel() {
                 demoBalances.push({
                   symbol: "NFTs",
                   balance: nftCountNumber.toString(),
-                  type: "nft",
-                  icon: "🖼️"
+                  type: "nft"
                 });
               }
             } catch (nftError) {
@@ -178,18 +173,17 @@ export function BalancesPanel() {
                   symbol: "NFTs",
                   balance: storedNftCount,
                   type: "nft",
-                  icon: "🖼️"
+                  icon: "N"
                 });
               }
             }
 
         // Add demo activity count
-        const existingTxs = JSON.parse(localStorage.getItem("demo-transactions") || "[]");
+        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
         demoBalances.push({
           symbol: "Gasless Txs",
           balance: existingTxs.length.toString(),
-          type: "activity",
-          icon: "⚡"
+          type: "activity"
         });
 
         setBalances(demoBalances);
@@ -270,7 +264,6 @@ export function BalancesPanel() {
             {balances.map((balance, index) => (
               <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{balance.icon}</span>
                   <div>
                     <div className="font-medium">{balance.symbol}</div>
                     <div className="text-xs text-muted-foreground">

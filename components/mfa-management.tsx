@@ -47,6 +47,8 @@ export function MFAManagement() {
   const [totpSecret, setTotpSecret] = useState<string>("");
   const [otpCode, setOtpCode] = useState<string>("");
   const [showSecret, setShowSecret] = useState(false);
+  const [webAuthnSupported, setWebAuthnSupported] = useState<boolean | null>(null);
+  const [isRegisteringPasskey, setIsRegisteringPasskey] = useState(false);
 
   // Dynamic hooks
   const registerPasskey = useRegisterPasskey();
@@ -54,6 +56,26 @@ export function MFAManagement() {
   const deletePasskey = useDeletePasskey();
   const promptMfaAuth = usePromptMfaAuth();
   const { addDevice, getUserDevices, authenticateDevice, deleteUserDevice } = useMfa();
+
+  // Check WebAuthn support on component mount
+  useEffect(() => {
+    const checkWebAuthnSupport = () => {
+      const supported = !!(
+        window.PublicKeyCredential &&
+        navigator.credentials &&
+        window.isSecureContext
+      );
+      setWebAuthnSupported(supported);
+      console.log("WebAuthn support check:", {
+        PublicKeyCredential: !!window.PublicKeyCredential,
+        navigatorCredentials: !!navigator.credentials,
+        isSecureContext: window.isSecureContext,
+        supported
+      });
+    };
+
+    checkWebAuthnSupport();
+  }, []);
 
   // Load user's MFA devices
   useEffect(() => {
@@ -72,6 +94,11 @@ export function MFAManagement() {
       try {
         const devices = await getUserDevices();
         console.log("Method 1 - getUserDevices result:", devices);
+        console.log("Method 1 - getUserDevices type:", typeof devices);
+        console.log("Method 1 - getUserDevices isArray:", Array.isArray(devices));
+        if (devices && Array.isArray(devices)) {
+          console.log("Method 1 - Device details:", devices.map(d => ({ id: d.id, type: d.type, name: d.name })));
+        }
         userDevices = devices || [];
       } catch (err) {
         console.log("Method 1 failed:", err);
@@ -90,48 +117,6 @@ export function MFAManagement() {
         }
       } catch (err) {
         console.log("Method 2 failed:", err);
-      }
-      
-      // Method 3: Try to access Dynamic context for additional MFA data
-      try {
-        console.log("Method 3 - Checking for additional MFA methods in useMfa hook");
-        const mfaMethods = useMfa();
-        console.log("Available MFA methods:", Object.keys(mfaMethods));
-        
-        // Try to call other methods if they exist
-        if (typeof (mfaMethods as any).getUserPasskeys === 'function') {
-          try {
-            const passkeys = await (mfaMethods as any).getUserPasskeys();
-            console.log("getUserPasskeys result:", passkeys);
-            userDevices = [...userDevices, ...(passkeys || [])];
-          } catch (err) {
-            console.log("getUserPasskeys failed:", err);
-          }
-        }
-      } catch (err) {
-        console.log("Method 3 failed:", err);
-      }
-      
-      // Method 4: Try to access Dynamic client directly
-      try {
-        console.log("Method 4 - Checking Dynamic context for client access");
-        const dynamicContext = useDynamicContext();
-        console.log("Dynamic context:", dynamicContext);
-        
-        if ((dynamicContext as any).sdk && typeof (dynamicContext as any).sdk.passkeys === 'object') {
-          console.log("SDK has passkeys object:", (dynamicContext as any).sdk.passkeys);
-          if (typeof (dynamicContext as any).sdk.passkeys.get === 'function') {
-            try {
-              const passkeys = await (dynamicContext as any).sdk.passkeys.get();
-              console.log("SDK passkeys.get result:", passkeys);
-              userDevices = [...userDevices, ...(passkeys || [])];
-            } catch (err) {
-              console.log("SDK passkeys.get failed:", err);
-            }
-          }
-        }
-      } catch (err) {
-        console.log("Method 4 failed:", err);
       }
       
       console.log("Final combined devices:", userDevices);
@@ -174,16 +159,73 @@ export function MFAManagement() {
   };
 
   const handleRegisterPasskey = async () => {
+    // Prevent multiple simultaneous registration attempts
+    if (isRegisteringPasskey) {
+      console.log("Passkey registration already in progress, ignoring duplicate request");
+      return;
+    }
+
     try {
       setIsLoading(true);
+      setIsRegisteringPasskey(true);
       setError(null);
-      await registerPasskey();
+
+      // Check WebAuthn support
+      if (!window.PublicKeyCredential) {
+        setError("Passkeys are not supported in this browser. Please use a modern browser like Chrome, Safari, or Firefox.");
+        return;
+      }
+
+      // Check if we're in a secure context (HTTPS or localhost)
+      if (!window.isSecureContext) {
+        setError("Passkeys require a secure context (HTTPS). Please access this site over HTTPS.");
+        return;
+      }
+
+      // Check if WebAuthn is available
+      if (!navigator.credentials) {
+        setError("WebAuthn is not available in this browser. Please update your browser or try a different one.");
+        return;
+      }
+
+      console.log("WebAuthn support detected, attempting passkey registration...");
+      const result = await registerPasskey();
+      console.log("Passkey registration result:", result);
+      console.log("Passkey registration result type:", typeof result);
+      console.log("Passkey registration result keys:", result ? Object.keys(result) : 'null/undefined');
+      
+      // Wait a moment for the API to update
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log("Refreshing devices after passkey registration...");
       await loadDevices(); // Refresh devices list
-    } catch (err) {
+      console.log("Passkey registration successful - devices refreshed");
+    } catch (err: any) {
       console.error("Failed to register passkey:", err);
-      setError("Failed to register passkey. Please try again.");
+      
+      // Provide more specific error messages based on the error type
+      if (err.name === 'AbortError') {
+        setError("Passkey registration was cancelled. Please try again if you want to add a passkey.");
+        return; // Don't show error for user cancellation
+      } else if (err.name === 'NotSupportedError') {
+        setError("Passkeys are not supported on this device or browser.");
+      } else if (err.name === 'NotAllowedError') {
+        setError("Passkey registration was cancelled or not allowed. Please try again and complete the registration process.");
+      } else if (err.name === 'SecurityError') {
+        setError("Security error: Please ensure you're using HTTPS and the domain is properly configured.");
+      } else if (err.name === 'InvalidStateError') {
+        setError("A passkey is already registered for this account. Please check your existing MFA devices or try refreshing the page.");
+        // Refresh devices to show the existing passkey
+        await loadDevices();
+        return;
+      } else if (err.message?.includes('network') || err.message?.includes('fetch')) {
+        setError("Network error: Please check your internet connection and try again.");
+      } else {
+        setError(`Failed to register passkey: ${err.message || 'Unknown error occurred'}`);
+      }
     } finally {
       setIsLoading(false);
+      setIsRegisteringPasskey(false);
     }
   };
 
@@ -391,13 +433,35 @@ export function MFAManagement() {
               <p className="text-sm text-muted-foreground flex-grow mb-3">
                 Use your device's biometric authentication (Face ID, Touch ID, or Windows Hello)
               </p>
+              
+              {webAuthnSupported === false && (
+                <div className="mb-3 p-2 bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-md">
+                  <div className="flex items-start">
+                    <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mr-2 mt-0.5 flex-shrink-0" />
+                    <div className="text-xs text-yellow-800 dark:text-yellow-200">
+                      <p className="font-medium">Passkeys not supported</p>
+                      <p className="mt-1">
+                        Your browser or device doesn't support passkeys. Please use a modern browser like Chrome, Safari, or Firefox with HTTPS.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+              
               <Button 
                 onClick={handleRegisterPasskey} 
-                disabled={isLoading}
+                disabled={isLoading || webAuthnSupported === false || isRegisteringPasskey}
                 className="w-full mt-auto"
                 variant="outline"
               >
-                {isLoading ? "Setting up..." : "Add Passkey"}
+                {isLoading || isRegisteringPasskey ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    {isRegisteringPasskey ? "Registering..." : "Setting up..."}
+                  </>
+                ) : (
+                  "Add Passkey"
+                )}
               </Button>
             </div>
 

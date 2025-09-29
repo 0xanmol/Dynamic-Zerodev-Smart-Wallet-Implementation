@@ -20,54 +20,73 @@ export function TransactionHistory() {
   const { primaryWallet } = useDynamicContext();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [walletAddress, setWalletAddress] = useState<string | null>(null);
 
   useEffect(() => {
-    // For demo purposes, we'll store transactions in localStorage
-    // In a real app, you'd fetch from an API or indexer
-    const storedTxs = localStorage.getItem("demo-transactions");
-    if (storedTxs) {
-      try {
-        setTransactions(JSON.parse(storedTxs));
-      } catch (err) {
-        console.error("Failed to parse stored transactions:", err);
-      }
+    // Only load transactions if wallet is connected
+    if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
+      return;
     }
-  }, []);
+
+    const loadTransactions = async () => {
+      try {
+        const walletClient = await primaryWallet.getWalletClient();
+        if (!walletClient?.account?.address) return;
+
+        setWalletAddress(walletClient.account.address);
+
+        // For demo purposes, we'll store transactions in localStorage
+        // In a real app, you'd fetch from an API or indexer
+        const storedTxs = localStorage.getItem(`demo-transactions-${walletClient.account.address}`);
+        if (storedTxs) {
+          try {
+            setTransactions(JSON.parse(storedTxs));
+          } catch (err) {
+            console.error("Failed to parse stored transactions:", err);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load transactions:", error);
+      }
+    };
+
+    loadTransactions();
+  }, [primaryWallet]);
 
   // Listen for new transactions (this would be called from the mint component)
   useEffect(() => {
-    const handleNewTransaction = (event: CustomEvent) => {
-      const newTx: Transaction = event.detail;
-      setTransactions(prev => [newTx, ...prev]);
-      localStorage.setItem("demo-transactions", JSON.stringify([newTx, ...transactions]));
+    if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
+      return;
+    }
+
+    const handleNewTransaction = async (event: CustomEvent) => {
+      try {
+        const walletClient = await primaryWallet.getWalletClient();
+        if (!walletClient?.account?.address) return;
+
+        const newTx: Transaction = event.detail;
+        setTransactions(prev => {
+          const updated = [newTx, ...prev];
+          localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(updated));
+          return updated;
+        });
+      } catch (error) {
+        console.error("Failed to handle new transaction:", error);
+      }
     };
 
     window.addEventListener("new-transaction", handleNewTransaction as EventListener);
     return () => {
       window.removeEventListener("new-transaction", handleNewTransaction as EventListener);
     };
-  }, [transactions]);
+  }, [primaryWallet]);
 
   const getExplorerUrlForTx = (tx: Transaction) => {
     if (!tx.hash) return "";
     
-    // Use chainId from transaction if available, otherwise try to get from wallet
-    let chainId = tx.chainId;
-    
-    if (!chainId && primaryWallet && isEthereumWallet(primaryWallet)) {
-      // Try to get current chain ID from wallet
-      primaryWallet.getWalletClient().then(client => {
-        chainId = client?.chain?.id;
-      }).catch(() => {
-        // Fallback to Base Sepolia if we can't determine chain
-        chainId = 84532;
-      });
-    }
-    
-    // Default to Base Sepolia if no chain ID available
-    if (!chainId) {
-      chainId = 84532;
-    }
+    // Use chainId from transaction if available, otherwise default to Base Sepolia
+    const chainId = tx.chainId || 84532;
+    console.log("Getting explorer URL for tx:", tx.hash, "with chainId:", chainId);
     
     return getExplorerUrl(chainId, tx.hash);
   };
@@ -75,11 +94,11 @@ export function TransactionHistory() {
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case "mint":
-        return "🪙";
+        return "M";
       case "transfer":
-        return "↔️";
+        return "T";
       default:
-        return "📄";
+        return "T";
     }
   };
 
@@ -116,7 +135,7 @@ export function TransactionHistory() {
         <CardContent>
           <div className="text-center py-6">
             <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-2">
-              <span className="text-muted-foreground">📊</span>
+              <span className="text-muted-foreground text-lg font-bold">H</span>
             </div>
             <p className="text-sm text-muted-foreground">Connect your wallet to see transaction history</p>
           </div>
@@ -146,7 +165,7 @@ export function TransactionHistory() {
         {transactions.length === 0 ? (
           <div className="text-center py-6">
             <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mx-auto mb-2">
-              <span className="text-muted-foreground">📄</span>
+              <span className="text-muted-foreground text-lg font-bold">T</span>
             </div>
             <p className="text-sm text-muted-foreground">No transactions yet</p>
             <p className="text-xs text-muted-foreground mt-1">Start by minting tokens or NFTs</p>

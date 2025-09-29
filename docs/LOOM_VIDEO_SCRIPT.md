@@ -3,7 +3,7 @@
 ## Video Structure (5-7 minutes)
 
 ### Introduction (30 seconds)
-"Hey Jeff! I'm [Name], and I've built a demo that tackles all the issues your team raised about Dynamic's embedded wallet tech. It's been a journey - I'll be honest, I ran into some real challenges along the way, but I think the end result shows what's possible. Let me walk you through what I built."
+"Hey Jeff! I'm [Name], and I've built a demo that tackles all the issues your team raised about Dynamic's embedded wallet tech. I'm excited to show you how straightforward it is to build with our platform. Let me walk you through what I built."
 
 ### Demo Overview (1 minute)
 "Here's what I built - a dashboard that shows Dynamic's embedded wallet capabilities. You can see we have three main tabs: Wallet functionality, How It Works explanations, and Security features. Let me show you each one."

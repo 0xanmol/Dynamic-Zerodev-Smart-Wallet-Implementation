@@ -30,20 +30,6 @@ export function useMintTokens() {
       if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
         throw new Error("Wallet not connected or not EVM compatible");
       }
-      const walletClient = await primaryWallet.getWalletClient();
-
-      // Use writeContract for ERC-20 transfers
-      // Convert amountDollars to wei (18 decimals)
-      const amountInWei = BigInt(amountDollars) * BigInt(10 ** 18);
-      const hash = await walletClient.writeContract({
-        address: tokenAddress,
-        abi: TOKEN_ABI,
-        functionName: "mint",
-        args: [amountInWei],
-      });
-
-      setTxHash(hash);
-
       const connector = primaryWallet.connector;
       if (!connector || !isZeroDevConnector(connector)) {
         throw new Error("Connector is not a ZeroDev connector");
@@ -51,16 +37,28 @@ export function useMintTokens() {
       const kernelClient = connector.getAccountAbstractionProvider();
       if (!kernelClient) throw new Error("Kernel client not found");
 
-      await kernelClient.waitForUserOperationReceipt({ hash });
+      // Use the same approach as the original Dynamic example
+      const walletClient = await primaryWallet.getWalletClient();
+
+      // Use writeContract for ERC-20 transfers
+      // Different contracts have different implementations:
+      // - Base Sepolia: expects raw dollar amounts (no scaling)
+      // - Ethereum Sepolia: expects raw token units (with scaling)
+      const chainId = Number(mintOptions.network);
+      const amount = chainId === 84532 
+        ? BigInt(amountDollars)  // Base Sepolia: raw dollars
+        : BigInt(amountDollars) * BigInt(10 ** 18); // Ethereum Sepolia: scaled units
       
-      // Update DUSD balance in local storage
-      const address = await walletClient.getAddresses();
-      const userAddress = address[0];
-      if (userAddress) {
-        const currentBalance = localStorage.getItem(`dusd-balance-${userAddress}`) || "0";
-        const newBalance = Number(currentBalance) + amountDollars;
-        localStorage.setItem(`dusd-balance-${userAddress}`, newBalance.toString());
-      }
+      const hash = await walletClient.writeContract({
+        address: tokenAddress,
+        abi: TOKEN_ABI,
+        functionName: "mint",
+        args: [amount],
+      });
+
+      setTxHash(hash);
+
+      await kernelClient.waitForUserOperationReceipt({ hash });
       
       return hash;
     } catch (e: unknown) {
