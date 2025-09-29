@@ -3,12 +3,12 @@
 ## Video Structure (8-9 minutes)
 
 ### Introduction (30 seconds)
-"Hey Jeff! I'm [Name], and I've built a comprehensive demo that tackles all the issues your team raised about Dynamic's embedded wallet tech. This isn't just a UI mockup - it's a fully functional application with real blockchain transactions. Let me walk you through what I built."
+"Hey Jeff! I'm [Name], and I've built a comprehensive demo that tackles all the issues your team raised about Dynamic's embedded wallet tech. This isn't just a UI mockup - it's a fully functioning application with real txns being sent on the blockchain. Let me walk you through what I built."
 
 ### Demo Overview (45 seconds)
-"Here's what I built - a complete dashboard with three main sections: Wallet functionality, How It Works explanations, and Security features. The key differentiator is that every transaction you'll see is a real blockchain transaction, completely gasless for the user thanks to ZeroDev's paymaster infrastructure.
+"Here's what I built - a complete dashboard with three main sections: Wallet functionality, How It Works explanations, and Security features. The key feature we are trying to highlight here are completely gasless for the user thanks to ZeroDev's paymaster infrastructure whom we at Dynamic have an seemless integration with.
 
-Notice the clean, professional UI - no emojis, enterprise-ready design. Let me show you each section in detail."
+Let me take you through each section in detail."
 
 ### Wallet Functionality Demo (3 minutes)
 
@@ -31,7 +31,7 @@ Let me show you the block explorer to prove these are real transactions. [Open B
 #### Part 3: NFT Minting & ETH Transfer (1 minute)
 "Now let me mint an NFT - this is a real ERC721 transaction, completely free for the user. The NFT gets minted to my wallet address.
 
-Finally, let me send some ETH to another address. Again, completely gasless. You can see the transaction appears in the history with the correct block explorer link for the current chain."
+Finally, let me send some ETH to another address. Again, completely gasless. You can see the transaction appears in the history with the block explorer link for the current chain."
 
 ### How It Works Explanation (1.5 minutes)
 "Now let me show you the 'How It Works' tab. This addresses your team's concern about understanding Account Abstraction.
@@ -59,12 +59,6 @@ This is enterprise-grade security with consumer-friendly UX."
 ### Technical Implementation & Block Explorer Proof (1 minute)
 "From a technical perspective, this is built with Next.js, React, and TypeScript. The Dynamic SDK handles all the wallet complexity, while ZeroDev provides the Account Abstraction infrastructure.
 
-Let me show you the block explorer again to prove these are real transactions. [Open transaction on BaseScan/Etherscan] You can see:
-- The actual transaction hash
-- Gas fees paid by the paymaster (not the user)
-- Smart contract interactions
-- Transaction status and confirmations
-
 The key insight is that we're using ZeroDev's sendUserOperation method for gasless transactions, not regular sendTransaction. This is what makes the magic happen."
 
 ### Conclusion (30 seconds)
@@ -72,7 +66,7 @@ The key insight is that we're using ZeroDev's sendUserOperation method for gasle
 
 The code is production-ready, includes comprehensive documentation, and works across multiple chains. Your team can test this immediately and see how Dynamic can solve your enterprise Web3 challenges.
 
-Let me know when you'd like to schedule a deeper technical discussion!"
+Hope this answered all the questions you had in mind, feel free to reachout to anyone from the Dynamic team in case you have more questions!"
 
 ## Key Points to Emphasize
 
