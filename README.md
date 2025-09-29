@@ -2,11 +2,11 @@
 
 **Repository**: [https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation](https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation)
 
-A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abstraction for gasless transactions on Base Sepolia.
+Built this to show how Dynamic's embedded wallets work with ZeroDev Account Abstraction for gasless transactions on Base Sepolia and Ethereum Sepolia.
 
 ## Features
 
-This demo addresses all concerns raised by Jeff's enterprise team:
+Addresses all the concerns Jeff's team raised:
 
 1. **NFT Minting with Embedded Wallets** - Complete gasless NFT minting functionality
 2. **Multi-chain Support** - Works on Base Sepolia and Ethereum Sepolia (expandable to all Dynamic-supported chains)

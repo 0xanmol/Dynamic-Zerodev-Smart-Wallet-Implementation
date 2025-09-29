@@ -6,7 +6,7 @@
 
 **Q: How does the user onboarding experience compare to traditional wallets?**
 
-A: Dynamic embedded wallets eliminate the need for seed phrases, private key management, and gas fee understanding. Users sign in with email or social login, just like any Web2 application. The smart wallet is created automatically in the background.
+A: It's night and day. Traditional wallets require users to understand seed phrases, private keys, and gas fees. With Dynamic, users just sign in with email or social login - same as any Web2 app. The smart wallet gets created behind the scenes.
 
 **Q: Can users recover their accounts if they lose access?**
 
@@ -42,11 +42,11 @@ A: Dynamic provides compliance tools and can integrate with regulatory reporting
 
 **Q: How difficult is it to integrate Dynamic into our existing application?**
 
-A: Integration is straightforward with the Dynamic SDK. The demo shows a complete implementation with core features like gasless transactions, NFT minting, and MFA. Most integration work involves:
+A: Pretty straightforward actually. The demo I built shows the full implementation - gasless transactions, NFT minting, MFA, the works. Most of the heavy lifting is:
 - Adding the Dynamic provider to your app
-- Configuring authentication methods
+- Configuring authentication methods  
 - Setting up smart wallet parameters
-- Configuring ZeroDev for gasless transactions
+- Getting ZeroDev configured for gasless transactions
 
 **Q: Can we use our existing authentication system?**
 
