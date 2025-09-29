@@ -128,11 +128,13 @@ export function SendMoney({
       // Gotcha: Must use sendUserOperation for gasless, not sendTransaction
       console.log("Sending ETH using ZeroDev kernel client...");
       const hash = await kernelClient.sendUserOperation({
-        calls: [{
-          to: recipientAddress as `0x${string}`,
-          value: amountWei,
-          data: "0x" as `0x${string}`,
-        }],
+        callData: await kernelClient.account.encodeCalls([
+          {
+            to: recipientAddress as `0x${string}`,
+            value: amountWei,
+            data: "0x" as `0x${string}`,
+          },
+        ]),
       });
       console.log("ZeroDev gasless ETH transfer successful, hash:", hash);
 

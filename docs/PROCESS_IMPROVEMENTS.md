@@ -13,17 +13,11 @@ The journey from "let's build a quick demo" to "here's a working application" ta
 ### 1. ZeroDev Integration Was a Headache
 The biggest time sink was figuring out ZeroDev's Account Abstraction flow. I spent hours debugging why transactions were being submitted but not confirming. Turns out I was using user operation hashes instead of actual transaction hashes from the receipt. The docs were scattered, and I had to piece together the correct flow from multiple sources.
 
-### 2. Contract Deployment Got Messy
-I tried Hardhat first, but ran into ESM module conflicts and dependency hell. Ended up deploying manually through Remix, which actually worked better - I could see exactly what was happening. But the funding process was confusing, and I had to redeploy multiple times because I kept messing up the constructor parameters.
-
-### 3. ZeroDev Dashboard Issues (This Needs Fixing)
+### 2. ZeroDev Dashboard Issues (This Needs Fixing)
 This was the most frustrating part. Dynamic still forces you to use ZeroDev v1 dashboard, and it's been buggy. I spent hours trying to deploy paymasters - it kept failing, timing out, or showing inconsistent states. I had to reach out to ZeroDev support directly, and even they admitted the v1 dashboard was breaking. ZeroDev v2 is much more stable, but Dynamic hasn't migrated yet. This is a real problem.
 
-### 4. UI Polish Takes Way Longer Than Expected
-What started as a "simple demo" became a full dashboard with tabs, responsive design, and proper error handling. Each "small" improvement took longer than expected, and I kept finding edge cases that needed attention.
-
-### 5. Documentation Gaps
-Dynamic SDK docs were good for basic stuff, but I had to dig through Discord and GitHub issues to figure out advanced features like MFA and social recovery.
+### 3. Account Abstraction Learning Curve
+The transition from traditional Web3 transactions to UserOperations required understanding ZeroDev's specific implementation patterns. The core concepts were clear, but the practical implementation details took some experimentation to get right.
 
 ## 3 Things I'd Do Differently for Better Customer Experience
 
@@ -34,17 +28,18 @@ Instead of making customers figure out the Dynamic Dashboard configuration, Zero
 - Provides one-click contract deployment scripts
 - Validates the entire setup before they start coding
 - **Critical**: Migrate to ZeroDev v2 dashboard to avoid the v1 reliability issues
+- **Add search functionality**: The Dynamic dev dashboard needs a search bar to quickly find settings, environment IDs, and configuration options
 
-### 2. Build a Template Library with Real Examples
-Rather than starting from scratch, I'd create a library of production-ready templates:
-- Pre-configured multi-chain setups
-- Common smart contract patterns (NFTs, tokens, DeFi)
-- UI component library with Dynamic integration
-- Error handling patterns that actually work
+### 2. Enhance the Existing Examples Repository
+While Dynamic's examples repo is a great starting point, I'd expand it with:
+- More comprehensive error handling patterns and user feedback
+- Production-ready UI components that handle edge cases
+- Multi-chain configuration examples with proper chain switching
+- Real-world integration patterns beyond basic demos
 
 ### 3. Implement Better Error Messages and Debugging Tools
 The cryptic error messages I encountered (like "0x7352d91c" from ZeroDev) were frustrating. I'd create:
-- Human-readable error message translation
+- Human-readable error messages
 - Interactive debugging tools that show transaction flow
 - Real-time status monitoring for paymaster balance
 - Clear troubleshooting guides for common issues
@@ -58,9 +53,7 @@ The cryptic error messages I encountered (like "0x7352d91c" from ZeroDev) were f
 
 ### Better Documentation
 - Interactive tutorials with live code examples
-- Video walkthroughs for complex integrations
-- Community-driven troubleshooting guides
-- Regular updates when APIs change
+- Video walkthroughs for complex integrations (NEEDED)
 
 ### Streamlined Testing
 - Automated end-to-end testing across multiple networks
@@ -70,7 +63,7 @@ The cryptic error messages I encountered (like "0x7352d91c" from ZeroDev) were f
 
 ## The Reality Check
 
-What I learned is that customers don't just want a demo - they want a production-ready solution they can actually use. The "simple" features like gasless transactions and MFA require deep understanding of Account Abstraction, smart contract security, and user experience design.
+What I learned is that customers don't just want a demo, they want a production-ready solution they can actually use. The "simple" features like gasless transactions and MFA require deep understanding of Account Abstraction, smart contract security, and user experience design.
 
 The key is making the complex simple, not making the simple complex. Every hour I spent debugging could have been saved with better tooling and documentation.
 
@@ -80,4 +73,4 @@ The key is making the complex simple, not making the simple complex. Every hour 
 2. **Create Real Examples**: Show, don't just tell, how to solve common problems
 3. **Provide Ongoing Support**: Be there when things go wrong, not just when they work
 
-The goal isn't just to solve the technical problem - it's to make the customer feel confident they can build something amazing with Dynamic.
+The goal isn't just to solve the technical problem, it's to make the customer feel confident they can build something amazing with Dynamic.

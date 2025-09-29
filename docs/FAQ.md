@@ -42,10 +42,11 @@ A: Dynamic provides compliance tools and can integrate with regulatory reporting
 
 **Q: How difficult is it to integrate Dynamic into our existing application?**
 
-A: Integration is straightforward with the Dynamic SDK. The demo shows a complete implementation in just a few components. Most integration work involves:
+A: Integration is straightforward with the Dynamic SDK. The demo shows a complete implementation with core features like gasless transactions, NFT minting, and MFA. Most integration work involves:
 - Adding the Dynamic provider to your app
 - Configuring authentication methods
 - Setting up smart wallet parameters
+- Configuring ZeroDev for gasless transactions
 
 **Q: Can we use our existing authentication system?**
 
@@ -53,7 +54,7 @@ A: Yes! Dynamic can integrate with existing authentication systems through custo
 
 **Q: How do we handle multi-chain support?**
 
-A: Dynamic supports multiple networks out of the box. The demo shows Base Sepolia, but you can easily add Ethereum, Polygon, Arbitrum, and other networks. Users can switch between chains seamlessly.
+A: Dynamic supports multiple networks out of the box. The demo shows both Base Sepolia and Ethereum Sepolia with automatic chain switching. You can easily add Ethereum, Polygon, Arbitrum, and other networks. Users can switch between chains seamlessly, and the app automatically uses the correct contract addresses for each network.
 
 **Q: What about mobile app integration?**
 
@@ -68,6 +69,8 @@ A: Gas fees are sponsored by paymaster services like ZeroDev. Costs depend on:
 - Network gas prices
 - Paymaster policies
 - Your sponsorship budget
+
+The demo uses ZeroDev's paymaster service, which sponsors all gas fees for your users. You can set spending limits and policies to control costs.
 
 **Q: Can we implement our own paymaster to control costs?**
 
@@ -160,6 +163,9 @@ A: The demo includes educational components that explain:
 - Benefits over traditional wallets
 - Security features and best practices
 - Transaction flow and gas sponsorship
+- Account Abstraction concepts
+
+The "How It Works" section in the demo provides a clear explanation that you can customize for your users.
 
 ### Advanced Features
 

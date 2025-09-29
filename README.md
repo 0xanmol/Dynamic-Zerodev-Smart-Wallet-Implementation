@@ -1,5 +1,7 @@
 # Dynamic + ZeroDev Smart Wallet Implementation
 
+**Repository**: [https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation](https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation)
+
 A complete implementation of Dynamic's embedded wallets with ZeroDev Account Abstraction for gasless transactions on Base Sepolia.
 
 ## Features
@@ -197,11 +199,9 @@ This project is licensed under the MIT License.
 
 ## Success Metrics
 
-- Real blockchain transactions on Base Sepolia
 - Gasless transactions via ZeroDev sponsorship
 - Working NFT minting with contract interaction
 - Live transaction tracking and verification
-- Modern, responsive UI with excellent UX
 
 ---
 

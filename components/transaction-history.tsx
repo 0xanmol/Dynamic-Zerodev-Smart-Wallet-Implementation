@@ -8,7 +8,7 @@ import { getExplorerUrl } from "@/constants";
 
 interface Transaction {
   hash: string;
-  type: "mint" | "transfer" | "other";
+  type: "mint" | "nft_mint" | "send_money" | "transfer" | "other";
   amount?: string;
   symbol?: string;
   timestamp: number;
@@ -55,19 +55,26 @@ export function TransactionHistory() {
 
   // Listen for new transactions (this would be called from the mint component)
   useEffect(() => {
-    if (!primaryWallet || !isEthereumWallet(primaryWallet)) {
+    if (!primaryWallet || !isEthereumWallet(primaryWallet) || !walletAddress) {
       return;
     }
 
     const handleNewTransaction = async (event: CustomEvent) => {
       try {
-        const walletClient = await primaryWallet.getWalletClient();
-        if (!walletClient?.account?.address) return;
+        console.log("Transaction event received:", event.detail);
+        console.log("Current walletAddress:", walletAddress);
+        
+        if (!walletAddress) {
+          console.log("No walletAddress, skipping transaction");
+          return;
+        }
 
         const newTx: Transaction = event.detail;
+        console.log("Adding new transaction:", newTx);
         setTransactions(prev => {
           const updated = [newTx, ...prev];
-          localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(updated));
+          localStorage.setItem(`demo-transactions-${walletAddress}`, JSON.stringify(updated));
+          console.log("Transaction added to localStorage and state");
           return updated;
         });
       } catch (error) {
@@ -75,11 +82,11 @@ export function TransactionHistory() {
       }
     };
 
-    window.addEventListener("new-transaction", handleNewTransaction as EventListener);
+    window.addEventListener("new-transaction", handleNewTransaction as unknown as EventListener);
     return () => {
-      window.removeEventListener("new-transaction", handleNewTransaction as EventListener);
+      window.removeEventListener("new-transaction", handleNewTransaction as unknown as EventListener);
     };
-  }, [primaryWallet]);
+  }, [primaryWallet, walletAddress]);
 
   const getExplorerUrlForTx = (tx: Transaction) => {
     if (!tx.hash) return "";
@@ -95,6 +102,10 @@ export function TransactionHistory() {
     switch (type) {
       case "mint":
         return "M";
+      case "nft_mint":
+        return "N";
+      case "send_money":
+        return "S";
       case "transfer":
         return "T";
       default:
@@ -179,8 +190,12 @@ export function TransactionHistory() {
                     {getTransactionIcon(tx.type)}
                   </div>
                 <div>
-                  <div className="text-sm font-medium capitalize">
-                    {tx.type}
+                  <div className="text-sm font-medium">
+                    {tx.type === "mint" ? "Claim DUSD" : 
+                     tx.type === "nft_mint" ? "Mint NFT" :
+                     tx.type === "send_money" ? "Send ETH" :
+                     tx.type === "transfer" ? "Transfer" :
+                     tx.type}
                     {tx.amount && tx.symbol && (
                       <span className="ml-1 text-muted-foreground">
                         {tx.amount} {tx.symbol}

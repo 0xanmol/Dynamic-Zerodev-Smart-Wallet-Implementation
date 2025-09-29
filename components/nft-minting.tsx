@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Loader2, Image, ExternalLink } from "lucide-react";
-import { parseEther, formatEther } from "viem";
+import { parseEther, formatEther, encodeFunctionData } from "viem";
 import { getContractAddress, NFT_ABI } from "@/constants";
 
 // NFT contract address will be determined dynamically based on current chain
@@ -67,16 +67,31 @@ export function NFTMinting({
       }
 
       // Mint NFT using ZeroDev (free minting - no value required)
-      const hash = await walletClient.writeContract({
-        address: nftContractAddress as `0x${string}`,
+      // Encode the mint function call
+      const mintData = encodeFunctionData({
         abi: NFT_ABI,
         functionName: "mint",
         args: [walletClient.account.address],
       });
 
+      console.log("Sending NFT mint using ZeroDev kernel client...");
+      const userOpHash = await kernelClient.sendUserOperation({
+        callData: await kernelClient.account.encodeCalls([
+          {
+            to: nftContractAddress as `0x${string}`,
+            value: BigInt(0),
+            data: mintData,
+          },
+        ]),
+      });
+      console.log("ZeroDev gasless NFT mint successful, userOpHash:", userOpHash);
+
       // Wait for user operation receipt (ZeroDev way)
       try {
-        const userOpReceipt = await kernelClient.waitForUserOperationReceipt({ hash });
+        const userOpReceipt = await kernelClient.waitForUserOperationReceipt({ 
+          hash: userOpHash as `0x${string}`,
+          timeout: 120000, // 2 minutes timeout
+        });
         
         // The actual transaction hash is in the receipt
         const actualTxHash = userOpReceipt.receipt.transactionHash;
@@ -135,7 +150,7 @@ export function NFTMinting({
         const explorerUrl = chainId === 84532 
           ? `https://sepolia.basescan.org/tx/${actualTxHash}`
           : `https://sepolia.etherscan.io/tx/${actualTxHash}`;
-        alert(`NFT Minted Successfully!\n\nUser Operation Hash: ${hash}\nTransaction Hash: ${actualTxHash}\n\nYour NFT has been minted and confirmed on the blockchain\nView on Explorer: ${explorerUrl}\n\nYour NFT balance: ${userNFTBalance + 1}`);
+        alert(`NFT Minted Successfully!\n\nUser Operation Hash: ${userOpHash}\nTransaction Hash: ${actualTxHash}\n\nYour NFT has been minted and confirmed on the blockchain\nView on Explorer: ${explorerUrl}\n\nYour NFT balance: ${userNFTBalance + 1}`);
         
         // Only call success after we have the real transaction hash
         onTransactionSuccess?.();
@@ -146,7 +161,7 @@ export function NFTMinting({
         
         // Store as pending transaction (use user op hash for now)
         const txData = {
-          hash, // This is the user operation hash
+          hash: userOpHash, // This is the user operation hash
           type: "nft_mint",
           amount: "0",
           symbol: "ETH",

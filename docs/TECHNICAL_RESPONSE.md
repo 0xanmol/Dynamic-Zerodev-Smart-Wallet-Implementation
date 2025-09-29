@@ -2,11 +2,11 @@
 
 Hey Jeff,
 
-I've built a demo that tackles all the issues your team raised. It's been a journey - I'll be honest, I ran into some real challenges along the way, but I think the end result shows what's possible with Dynamic's embedded wallet tech.
+I've whipped up a demo that tackles all the issues your team raised. I wanted to make things easier for your evaluation process, so I built something that shows exactly how Dynamic's embedded wallet tech can solve your challenges.
 
 ## What I Actually Built
 
-**Demo**: [Available for testing - see setup instructions below]
+**Demo**: [GitHub Repository](https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation) - Complete working implementation with setup instructions
 
 ### Your Team's Issues → What I Delivered
 
@@ -64,7 +64,7 @@ I've built a demo that tackles all the issues your team raised. It's been a jour
 
 ```bash
 # Clone and install
-git clone <repo-url>
+git clone https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation.git
 cd nextjs-evm-gasless-zerodev
 npm install
 
