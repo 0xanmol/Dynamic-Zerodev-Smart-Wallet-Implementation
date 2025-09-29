@@ -1,5 +1,7 @@
 # Documentation Index
 
+**Demo Video**: [https://screen.studio/share/ye6bzoEz](https://screen.studio/share/ye6bzoEz)
+
 **Repository**: [https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation](https://github.com/0xanmol/Dynamic-Zerodev-Smart-Wallet-Implementation)
 
 This directory contains all the written materials for the Dynamic + ZeroDev demo project, addressing the requirements from Jeff's team evaluation.
@@ -8,20 +10,16 @@ This directory contains all the written materials for the Dynamic + ZeroDev demo
 
 ### 1. Technical Response & Communication
 - **[TECHNICAL_RESPONSE.md](./TECHNICAL_RESPONSE.md)** - Slack-style response to Jeff's team
-- **[CUSTOMER_RESPONSE.md](./CUSTOMER_RESPONSE.md)** - Detailed technical response with implementation details
 - **[FAQ.md](./FAQ.md)** - Comprehensive FAQ for enterprise evaluation
 
-### 2. Demo Materials
-- **[LOOM_VIDEO_SCRIPT.md](./LOOM_VIDEO_SCRIPT.md)** - Script for recorded demo video
-- **[SETUP_GUIDE.md](./SETUP_GUIDE.md)** - Complete setup instructions for Jeff's team
+### 2. Architecture & Technical Design
+- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and technical design
 
 ### 3. Process & Development
 - **[PROCESS_IMPROVEMENTS.md](./PROCESS_IMPROVEMENTS.md)** - Process improvements for future customers
-- **[DEVELOPMENT_NOTES.md](./DEVELOPMENT_NOTES.md)** - Technical implementation details and gotchas
 
-### 4. Architecture & Technical Design
-- **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and technical design
-- **[README.md](../README.md)** - Main project README with setup instructions
+### 4. Main Project
+- **[README.md](../README.md)** - Main project README with setup instructions and demo overview
 
 ## Issues Addressed
 
@@ -52,7 +50,6 @@ This directory contains all the written materials for the Dynamic + ZeroDev demo
 ### Core Documentation
 - **TECHNICAL_RESPONSE.md**: Slack-style response to Jeff's team
 - **FAQ.md**: Enterprise evaluation questions and answers
-- **LOOM_VIDEO_SCRIPT.md**: 5-7 minute video script for demo walkthrough
 - **PROCESS_IMPROVEMENTS.md**: Process improvements for future customer onboarding
 - **ARCHITECTURE.md**: System architecture and technical design
 
@@ -61,8 +58,8 @@ This directory contains all the written materials for the Dynamic + ZeroDev demo
 1. **Read the Technical Response**: Start with [TECHNICAL_RESPONSE.md](./TECHNICAL_RESPONSE.md)
 2. **Review the FAQ**: Check [FAQ.md](./FAQ.md) for enterprise concerns
 3. **Follow Setup Instructions**: See main [README.md](../README.md) for setup
-4. **Watch Demo Video**: Follow [LOOM_VIDEO_SCRIPT.md](./LOOM_VIDEO_SCRIPT.md) for walkthrough
-5. **Explore Architecture**: Review [ARCHITECTURE.md](./ARCHITECTURE.md) for technical details
+4. **Explore Architecture**: Review [ARCHITECTURE.md](./ARCHITECTURE.md) for technical details
+5. **Review Process Improvements**: See recommendations in [PROCESS_IMPROVEMENTS.md](./PROCESS_IMPROVEMENTS.md)
 
 ## Demo Features Showcased
 
@@ -91,30 +88,6 @@ This directory contains all the written materials for the Dynamic + ZeroDev demo
 - **Networks**: Base Sepolia + Ethereum Sepolia
 - **Styling**: Tailwind CSS with shadcn/ui
 
-## Next Steps
-
-### For Jeff's Team
-1. **Test the demo** using the setup guide
-2. **Review the code** and architecture
-3. **Evaluate security features** for your use case
-4. **Plan integration** with existing systems
-
-### For Technical Evaluation
-1. **Review the code** and implementation
-2. **Test multi-chain functionality**
-3. **Evaluate security features**
-4. **Check strategic comments** in the codebase
-
-## Notes for CTO Review
-
-This documentation demonstrates:
-- **Real development challenges** encountered and solved
-- **Production considerations** for enterprise deployment
-- **Strategic technical decisions** with clear reasoning
-- **Comprehensive error handling** and user experience
-
-The code includes strategic comments only for gotchas and complex logic, showing thoughtful development without over-documentation.
 
 ---
 
-**Built to solve enterprise Web3 challenges with Dynamic's embedded wallet technology.**
