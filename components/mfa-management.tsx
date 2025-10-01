@@ -97,7 +97,7 @@ export function MFAManagement() {
         console.log("Method 1 - getUserDevices type:", typeof devices);
         console.log("Method 1 - getUserDevices isArray:", Array.isArray(devices));
         if (devices && Array.isArray(devices)) {
-          console.log("Method 1 - Device details:", devices.map(d => ({ id: d.id, type: d.type, name: d.name })));
+          console.log("Method 1 - Device details:", devices.map(d => ({ id: d.id, type: d.type })));
         }
         userDevices = devices || [];
       } catch (err) {
@@ -619,7 +619,7 @@ export function MFAManagement() {
                       <Smartphone className="h-5 w-5 text-green-600" />
                     )}
                     <div>
-                      <p className="font-medium">{device.name || `${device.type === "passkey" ? "Passkey" : "Authenticator App"}`}</p>
+                      <p className="font-medium">{device.type === "passkey" ? "Passkey" : "Authenticator App"}</p>
                       <p className="text-sm text-muted-foreground">
                         {device.type === "passkey" ? "Passkey" : "Authenticator App"} • 
                         {device.createdAt ? `Added ${new Date(device.createdAt).toLocaleDateString()}` : "Recently added"}

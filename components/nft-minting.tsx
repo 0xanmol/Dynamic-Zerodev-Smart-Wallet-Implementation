@@ -102,7 +102,7 @@ export function NFTMinting({
         if (publicClient) {
           try {
             const newBalance = await publicClient.readContract({
-              address: NFT_CONTRACT_ADDRESS as `0x${string}`,
+              address: getContractAddress(chainId, "NFT") as `0x${string}`,
               abi: NFT_ABI,
               functionName: "balanceOf",
               args: [walletClient.account.address],
@@ -180,7 +180,7 @@ export function NFTMinting({
         window.dispatchEvent(transactionEvent);
         
         // Show pending message - DO NOT call success since transaction isn't confirmed
-        alert(`NFT Mint Transaction Submitted (Pending)\n\nUser Operation Hash: ${hash}\n\nYour transaction has been submitted but is still processing\nIt may take a few minutes to confirm due to network conditions\n\nNote: The transaction will appear on BaseScan once confirmed.`);
+        alert(`NFT Mint Transaction Submitted (Pending)\n\nUser Operation Hash: ${userOpHash}\n\nYour transaction has been submitted but is still processing\nIt may take a few minutes to confirm due to network conditions\n\nNote: The transaction will appear on BaseScan once confirmed.`);
       }
     } catch (error) {
       console.error("NFT minting failed:", error);
@@ -199,24 +199,30 @@ export function NFTMinting({
       setMintPrice("0");
       setUserNFTBalance(0);
 
+      // Get chain ID
+      const walletClient = await primaryWallet.getWalletClient();
+      if (!walletClient) return;
+      
+      const chainId = walletClient.chain?.id;
+      if (!chainId) return;
+
       // Try to get contract data, but don't fail if it doesn't work
       try {
         const publicClient = await primaryWallet.getPublicClient();
         if (publicClient) {
           // Get mint price from contract (should be 0 for free minting)
           const price = await publicClient.readContract({
-            address: NFT_CONTRACT_ADDRESS as `0x${string}`,
+            address: getContractAddress(chainId, "NFT") as `0x${string}`,
             abi: NFT_ABI,
             functionName: "mintPrice",
           });
           setMintPrice(formatEther(price as bigint));
 
           // Get user's NFT balance
-          const walletClient = await primaryWallet.getWalletClient();
           if (walletClient) {
             try {
               const balance = await publicClient.readContract({
-                address: NFT_CONTRACT_ADDRESS as `0x${string}`,
+                address: getContractAddress(chainId, "NFT") as `0x${string}`,
                 abi: NFT_ABI,
                 functionName: "balanceOf",
                 args: [walletClient.account.address],

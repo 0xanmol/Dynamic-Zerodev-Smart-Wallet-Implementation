@@ -14,6 +14,7 @@ interface DemoBalance {
   symbol: string;
   balance: string;
   type: "token" | "nft" | "activity";
+  icon?: string;
 }
 
 export function BalancesPanel() {
