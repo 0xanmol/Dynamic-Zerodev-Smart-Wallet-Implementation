@@ -138,7 +138,7 @@ export function BalancesPanel() {
               
               if (!nftContract) {
                 console.log(`NFT contract not found for chain ${chainId}, using localStorage fallback`);
-                const storedCount = localStorage.getItem(`nftCount_${chainId}`);
+                const storedCount = typeof window !== 'undefined' ? localStorage.getItem(`nftCount_${chainId}`) : null;
                 const nftCountNumber = storedCount ? parseInt(storedCount, 10) : 0;
                 
                 demoBalances.push({
@@ -157,7 +157,9 @@ export function BalancesPanel() {
                 const nftCountNumber = Number(nftCount);
                 
                 // Store in localStorage for persistence (chain-specific)
-                localStorage.setItem(`nftCount_${chainId}`, nftCountNumber.toString());
+                if (typeof window !== 'undefined') {
+                  localStorage.setItem(`nftCount_${chainId}`, nftCountNumber.toString());
+                }
                 
                 demoBalances.push({
                   symbol: "NFTs",
@@ -168,7 +170,7 @@ export function BalancesPanel() {
             } catch (nftError) {
               console.error("Failed to fetch NFT balance:", nftError);
               // Use localStorage fallback
-              const storedNftCount = localStorage.getItem(`nftCount_${chainId}`);
+              const storedNftCount = typeof window !== 'undefined' ? localStorage.getItem(`nftCount_${chainId}`) : null;
               if (storedNftCount) {
                 demoBalances.push({
                   symbol: "NFTs",
@@ -180,7 +182,7 @@ export function BalancesPanel() {
             }
 
         // Add demo activity count
-        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
+        const existingTxs = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]") : [];
         demoBalances.push({
           symbol: "Gasless Txs",
           balance: existingTxs.length.toString(),

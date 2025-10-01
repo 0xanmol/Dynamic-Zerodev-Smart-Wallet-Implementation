@@ -113,12 +113,14 @@ export function NFTMinting({
           } catch (balanceError) {
             console.log("Could not fetch NFT balance, using localStorage fallback");
             // Use localStorage fallback
-            const storedNftCount = localStorage.getItem(`nftCount_${walletClient.chain?.id || 84532}`);
+            const storedNftCount = typeof window !== 'undefined' ? localStorage.getItem(`nftCount_${walletClient.chain?.id || 84532}`) : null;
             const currentCount = storedNftCount ? parseInt(storedNftCount, 10) : 0;
             const newCount = currentCount + 1;
             setUserNFTBalance(newCount);
             setLastMintedTokenId(newCount);
-            localStorage.setItem(`nftCount_${walletClient.chain?.id || 84532}`, newCount.toString());
+            if (typeof window !== 'undefined') {
+              localStorage.setItem(`nftCount_${walletClient.chain?.id || 84532}`, newCount.toString());
+            }
           }
         }
         
@@ -136,9 +138,11 @@ export function NFTMinting({
           chainId: currentChainId,
         };
         
-        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
+        const existingTxs = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]") : [];
         existingTxs.unshift(txData);
-        localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
+        }
         
         // Emit transaction event for other components
         const transactionEvent = new CustomEvent("new-transaction", {
@@ -169,9 +173,11 @@ export function NFTMinting({
           status: "pending" as const,
         };
         
-        const existingTxs = JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]");
+        const existingTxs = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem(`demo-transactions-${walletClient.account.address}`) || "[]") : [];
         existingTxs.unshift(txData);
-        localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(`demo-transactions-${walletClient.account.address}`, JSON.stringify(existingTxs));
+        }
         
         // Emit transaction event for other components
         const transactionEvent = new CustomEvent("new-transaction", {
@@ -231,11 +237,13 @@ export function NFTMinting({
               setUserNFTBalance(nftCount);
               
               // Store NFT count in localStorage for persistence
-              localStorage.setItem(`nftCount_${chainId}`, nftCount.toString());
+              if (typeof window !== 'undefined') {
+                localStorage.setItem(`nftCount_${chainId}`, nftCount.toString());
+              }
             } catch (balanceError) {
               console.log("Could not fetch NFT balance, using localStorage fallback");
               // Use localStorage fallback
-              const storedNftCount = localStorage.getItem(`nftCount_${chainId}`);
+              const storedNftCount = typeof window !== 'undefined' ? localStorage.getItem(`nftCount_${chainId}`) : null;
               if (storedNftCount) {
                 setUserNFTBalance(parseInt(storedNftCount, 10));
               }
