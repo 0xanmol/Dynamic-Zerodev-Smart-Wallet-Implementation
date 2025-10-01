@@ -21,7 +21,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           environmentId:
             // replace with your own environment ID
             process.env.NEXT_PUBLIC_DYNAMIC_ENV_ID ||
-            "e552c8b4-e9dd-454b-b309-16cba85aef47",
+            "3de0b009-6d3e-4706-9ccc-98d42bb68454",
           walletConnectors: [
             EthereumWalletConnectors,
             ZeroDevSmartWalletConnectors,
